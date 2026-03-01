@@ -1,0 +1,2353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indonesia Healthcare National Reference Lab</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        'primary-bg': '#f8faff',
+        'secondary-bg': '#eef2ff',
+        'accent-purple': '#7c3aed',
+        'accent-blue': '#2563eb',
+        'success': '#059669',
+        'text-primary': '#0f172a',
+        'text-secondary': '#475569',
+      },
+      fontFamily: {
+        'inter': ['Inter', 'sans-serif'],
+      }
+    }
+  }
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #f8faff; color: #0f172a; overflow-x: hidden; }
+.content-wrapper { position: relative; z-index: 1; }
+
+/* Subtle grid background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(124, 58, 237, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Animations */
+.fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+.card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.card-hover:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(124, 58, 237, 0.15); }
+.glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(124, 58, 237, 0.15); box-shadow: 0 2px 16px rgba(124, 58, 237, 0.06); }
+
+/* Pulse Glow */
+@keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(124, 58, 237, 0.15); } 50% { box-shadow: 0 0 36px rgba(124, 58, 237, 0.28); } }
+.pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+
+/* Timeline Slider */
+.timeline-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: linear-gradient(to right, #8b5cf6, #3b82f6); border-radius: 4px; outline: none; }
+.timeline-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; background: #f8fafc; border-radius: 50%; cursor: pointer; box-shadow: 0 0 10px rgba(139, 92, 246, 0.5); }
+
+/* Custom List */
+.custom-list li { position: relative; padding-left: 1.5rem; margin-bottom: 0.5rem; }
+.custom-list li::before { content: "•"; position: absolute; left: 0; color: #8b5cf6; font-weight: bold; }
+
+/* Progress Fill */
+.progress-fill { transition: width 0.5s ease-out; }
+
+/* Circular Progress */
+.circular-progress { transform: rotate(-90deg); }
+.circular-progress circle { transition: stroke-dashoffset 1.5s ease-out; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .hero-title { font-size: 1.5rem !important; }
+  .section-title { font-size: 1.25rem !important; }
+
+  /* Pyramid layers on mobile - equal width for better mobile display */
+  .pyramid-layer { width: 95% !important; margin: 0 auto 6px auto !important; }
+  .pyramid-layer:last-child { margin-bottom: 0 !important; }
+
+  /* Card adjustments */
+  .glass { padding: 1rem !important; border-radius: 1rem !important; }
+
+  /* Mobile logo cards */
+  .px-3.py-2.glass { flex-direction: column; gap: 0.5rem; padding: 0.75rem !important; min-width: 100px; }
+  .px-3.py-2.glass img { height: 20px !important; max-width: 80px; }
+  .px-3.py-2.glass span { font-size: 0.75rem !important; }
+
+  /* Core concept grid on mobile */
+  .grid.grid-cols-2 { grid-template-columns: 1fr !important; }
+  .grid.md\\:grid-cols-4 { grid-template-columns: 1fr !important; }
+
+  /* Mobile buttons */
+  .btn-primary, .btn-secondary { padding: 0.75rem 1.5rem !important; font-size: 1rem !important; }
+}
+
+@media (max-width: 768px) {
+  /* Stack grid items on tablet */
+  .grid.md\\:grid-cols-2, .grid.md\\:grid-cols-3, .grid.md\\:grid-cols-4 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Stack 2-column grids */
+  .lg\\:grid-cols-4, .lg\\:grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Adjust padding for mobile */
+  section { padding: 2rem 1rem !important; }
+
+  /* Mobile timeline */
+  .timeline-slider { height: 6px !important; }
+
+  /* Mobile phase buttons */
+  .phase-btn { padding: 0.5rem 1rem !important; font-size: 0.875rem !important; }
+}
+
+/* Logo image sizing */
+.glass img {
+  max-height: 28px;
+  width: auto;
+  object-fit: contain;
+}
+
+@media (max-width: 480px) {
+  .glass img { max-height: 20px; }
+  .lg\\:grid-cols-4, .lg\\:grid-cols-3 { grid-template-columns: 1fr !important; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #7c3aed, #2563eb); border-radius: 4px; }
+
+/* Buttons */
+.btn-primary { background: linear-gradient(135deg, #7c3aed, #2563eb); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4); }
+.btn-secondary { background: transparent; border: 2px solid #7c3aed; transition: background 0.3s ease, transform 0.3s ease; }
+.btn-secondary:hover { background: rgba(124, 58, 237, 0.08); transform: translateY(-2px); }
+
+/* Pyramid Layer */
+.pyramid-layer { transition: all 0.3s ease; cursor: pointer; }
+.pyramid-layer:hover { filter: brightness(0.97); transform: translateX(8px); box-shadow: 4px 0 20px rgba(124,58,237,0.15); }
+
+/* Animated Border */
+@keyframes borderGlow { 0%, 100% { border-color: rgba(124, 58, 237, 0.3); } 50% { border-color: rgba(37, 99, 235, 0.5); } }
+.animated-border { animation: borderGlow 3s ease-in-out infinite; }
+
+/* Partner Case Card */
+.partner-case-card { transition: all 0.3s ease; }
+.partner-case-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(139, 92, 246, 0.2); }
+
+/* Data Flow Animation */
+@keyframes flowDown { 0% { transform: translateY(-20px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(20px); opacity: 0; } }
+.flow-dot { animation: flowDown 2s ease-in-out infinite; }
+.flow-dot:nth-child(2) { animation-delay: 0.3s; }
+.flow-dot:nth-child(3) { animation-delay: 0.6s; }
+.flow-dot:nth-child(4) { animation-delay: 0.9s; }
+
+/* ============================================================
+   PRINT STYLES — optimized for Chrome "Save as PDF"
+   Settings: A4, margins Minimum, scale 80%, Background graphics ON
+   ============================================================ */
+@media print {
+
+  /* Force background colors and images to print */
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Reset page */
+  @page {
+    size: A4;
+    margin: 12mm 10mm;
+  }
+
+  /* Base */
+  body {
+    background: #f8faff !important;
+    color: #0f172a !important;
+    font-size: 11pt;
+  }
+
+  /* Hide decorative / interactive elements */
+  body::before { display: none !important; }          /* grid bg */
+  .animate-bounce { display: none !important; }       /* scroll chevron */
+  button { display: none !important; }                /* CTA buttons */
+  .timeline-slider { display: none !important; }
+  .flow-dot { animation: none !important; }
+  .fade-in { opacity: 1 !important; transform: none !important; }
+  .pulse-glow { animation: none !important; }
+  .animated-border { animation: none !important; }
+
+  /* Make all sections block-level, remove screen-only padding */
+  section {
+    padding: 16pt 0 !important;
+    display: block !important;
+  }
+
+  /* Hero — compact for print */
+  #hero {
+    min-height: unset !important;
+    padding: 24pt 0 16pt !important;
+    background: linear-gradient(160deg, #f8faff 0%, #eff6ff 40%, #f5f3ff 100%) !important;
+    page-break-after: always;
+  }
+  #hero .text-3xl { font-size: 22pt !important; }
+  #hero .text-5xl, #hero .text-6xl { font-size: 26pt !important; }
+  #hero .max-w-6xl { max-width: 100% !important; }
+
+  /* Each major section starts on a new page */
+  #context       { page-break-before: always; }
+  #nrl-value     { page-break-before: always; }
+  #solution      { page-break-before: always; }
+  #outcomes      { page-break-before: always; }
+  #partners      { page-break-before: always; }
+  #security      { page-break-before: always; }
+  #roadmap       { page-break-before: always; }
+
+  /* Pain points — compact, stays with context or solution */
+  #pain-points   { page-break-before: avoid; }
+
+  /* Never break inside a card */
+  .glass,
+  .card-hover,
+  .rounded-2xl,
+  .rounded-xl {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Grid cards — allow wrapping but keep each card intact */
+  .grid {
+    page-break-inside: auto;
+  }
+
+  /* Roadmap phases — each phase on same page */
+  #roadmap .space-y-8 > div {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin-bottom: 16pt;
+  }
+
+  /* Partner cards */
+  #partners .glass.rounded-2xl {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Disease capability section */
+  #solution .grid.grid-cols-2,
+  #solution .grid.md\\:grid-cols-4 {
+    page-break-inside: auto;
+  }
+
+  /* NRL value section — keep narrative + stack together */
+  #nrl-value .grid.md\\:grid-cols-2 > div {
+    page-break-inside: avoid;
+  }
+
+  /* Reduce excessive whitespace for print */
+  .py-20 { padding-top: 16pt !important; padding-bottom: 16pt !important; }
+  .py-12 { padding-top: 12pt !important; padding-bottom: 12pt !important; }
+  .mb-14 { margin-bottom: 16pt !important; }
+  .mb-10 { margin-bottom: 12pt !important; }
+  .mb-8  { margin-bottom: 10pt !important; }
+  .p-8   { padding: 12pt !important; }
+  .p-6   { padding: 10pt !important; }
+  .gap-6 { gap: 10pt !important; }
+  .gap-8 { gap: 12pt !important; }
+
+  /* Fix max-width containers for A4 width */
+  .max-w-7xl, .max-w-6xl, .max-w-5xl, .max-w-4xl, .max-w-3xl {
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Keep glass card styling intact */
+  .glass {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(124, 58, 237, 0.2) !important;
+    box-shadow: none !important;
+  }
+
+  /* Footer — hide or keep minimal */
+  footer, #footer-section {
+    page-break-before: always;
+  }
+
+  /* SVG map in Phase 4 — keep together */
+  svg { page-break-inside: avoid; break-inside: avoid; }
+
+  /* Ensure text colors print correctly */
+  .text-text-primary  { color: #0f172a !important; }
+  .text-text-secondary { color: #475569 !important; }
+  .text-accent-purple { color: #7c3aed !important; }
+  .text-accent-blue   { color: #2563eb !important; }
+  .text-success       { color: #059669 !important; }
+  .text-yellow-400, .text-yellow-500, .text-yellow-600 { color: #ca8a04 !important; }
+  .text-red-400, .text-red-500 { color: #dc2626 !important; }
+
+  /* Gradient text — fallback for print */
+  .bg-clip-text {
+    -webkit-text-fill-color: #7c3aed !important;
+    color: #7c3aed !important;
+  }
+
+}
+</style>
+</head>
+<body class="bg-slate-50" style="background:#f8faff;">
+<div class="content-wrapper">
+  <!-- Hero Section -->
+  <section id="hero" class="min-h-screen flex items-center justify-center px-4 py-20 relative" style="background: linear-gradient(160deg, #f8faff 0%, #eff6ff 40%, #f5f3ff 100%);">
+    <div class="max-w-6xl mx-auto text-center fade-in">
+      <div class="mb-6">
+        <span class="inline-block px-4 py-2 rounded-full glass text-accent-purple text-sm font-medium mb-6">
+          <i class="fas fa-flag mr-2"></i>National Laboratory System Strengthening Initiative
+        </span>
+      </div>
+      <h1 class="hero-title text-3xl md:text-5xl lg:text-6xl font-bold mb-3 leading-tight">
+        <span class="bg-gradient-to-r from-accent-purple via-accent-blue to-success bg-clip-text text-transparent">
+          Indonesia National Reference Lab
+        </span>
+      </h1>
+      <p class="text-lg md:text-xl font-semibold text-accent-purple/80 tracking-wide mb-3" style="letter-spacing:0.02em;">
+        The Quality Backbone for POCT/IVD at Scale
+      </p>
+      <p class="text-base md:text-lg text-text-secondary font-medium mb-7">
+        Supporting Indonesia's Primary Healthcare Transformation
+      </p>
+      <p class="text-text-secondary text-base md:text-lg max-w-4xl mx-auto mb-8 leading-relaxed">
+        A tiered NRL framework, unified LIS/LIMS digital infrastructure, and national POCT quality supervision architecture — building the diagnostic backbone that unlocks scalable POCT device deployment and IVD consumable sales across Indonesia's primary healthcare network.
+      </p>
+      <!-- Key Stats Bar -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-10">
+        <div class="glass rounded-xl p-4 text-center">
+          <div class="text-2xl font-black text-accent-purple">5,000+</div>
+          <div class="text-text-secondary text-xs mt-1">Healthcare Facilities</div>
+        </div>
+        <div class="glass rounded-xl p-4 text-center">
+          <div class="text-2xl font-black text-accent-blue">221M+</div>
+          <div class="text-text-secondary text-xs mt-1">JKN Beneficiaries</div>
+        </div>
+        <div class="glass rounded-xl p-4 text-center">
+          <div class="text-2xl font-black text-success">34</div>
+          <div class="text-text-secondary text-xs mt-1">Provinces to Serve</div>
+        </div>
+        <div class="glass rounded-xl p-4 text-center">
+          <div class="text-2xl font-black text-yellow-400">1+1+N+X</div>
+          <div class="text-text-secondary text-xs mt-1">System Architecture</div>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button onclick="scrollToSection('context')" class="btn-primary px-8 py-4 rounded-xl font-semibold text-lg cursor-pointer" style="color: white;">
+          <i class="fas fa-rocket mr-2"></i>Explore the Initiative
+        </button>
+        <button onclick="scrollToSection('roadmap')" class="btn-secondary px-8 py-4 rounded-xl text-accent-purple font-semibold text-lg cursor-pointer">
+          <i class="fas fa-road mr-2"></i>Implementation Roadmap
+        </button>
+      </div>
+      <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <i class="fas fa-chevron-down text-accent-purple text-2xl"></i>
+      </div>
+    </div>
+  </section>
+
+  <!-- Strategic Context Section -->
+  <section id="context" class="py-20 px-4" style="background: linear-gradient(180deg, #f8faff 0%, #eef2ff 100%);">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-14 fade-in">
+        <span class="inline-block px-4 py-2 rounded-full glass text-accent-blue text-sm font-medium mb-4">
+          <i class="fas fa-compass mr-2"></i>Strategic Context
+        </span>
+        <h2 class="section-title text-3xl md:text-5xl font-bold mb-6 text-text-primary">
+          Why Laboratory Infrastructure Is the Starting Point
+        </h2>
+        <p class="text-text-secondary text-lg max-w-3xl mx-auto">
+          Modern healthcare systems cannot function without an integrated diagnostic backbone. As Indonesia expands primary healthcare coverage, the quality and connectivity of its laboratory network becomes the decisive factor.
+        </p>
+      </div>
+
+      <!-- Three Context Pillars -->
+      <div class="grid md:grid-cols-3 gap-6 mb-14 fade-in">
+        <!-- Pillar A -->
+        <div class="glass rounded-2xl p-8 border-t-4 border-accent-blue card-hover">
+          <div class="w-14 h-14 rounded-xl bg-accent-blue/20 flex items-center justify-center mb-5">
+            <i class="fas fa-microscope text-accent-blue text-2xl"></i>
+          </div>
+          <h3 class="text-lg font-bold text-text-primary mb-3">Labs as National Health Infrastructure</h3>
+          <p class="text-text-secondary text-sm mb-4">Laboratory systems are not support functions — they are the backbone that enables every other part of the health system to work reliably.</p>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-check text-accent-blue"></i>Diagnostic consistency across all regions</div>
+            <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-check text-accent-blue"></i>Outbreak detection & epidemiological monitoring</div>
+            <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-check text-accent-blue"></i>Complex disease management support</div>
+            <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-check text-accent-blue"></i>International quality standards compliance</div>
+          </div>
+        </div>
+
+        <!-- Pillar B -->
+        <div class="glass rounded-2xl p-8 border-t-4 border-accent-purple card-hover">
+          <div class="w-14 h-14 rounded-xl bg-accent-purple/20 flex items-center justify-center mb-5">
+            <i class="fas fa-heartbeat text-accent-purple text-2xl"></i>
+          </div>
+          <h3 class="text-lg font-bold text-text-primary mb-3">Primary Healthcare Transformation Requires Diagnostic Reinforcement</h3>
+          <p class="text-text-secondary text-sm mb-4">As primary care services expand toward communities, diagnostic responsibility shifts closer to patients — creating urgent new demands on the lab network.</p>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-check text-accent-purple"></i>Diagnostic responsibility shifts to community level</div>
+            <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-check text-accent-purple"></i>Point-of-care testing volume rises rapidly</div>
+            <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-check text-accent-purple"></i>Referral complexity grows — needs clear escalation paths</div>
+            <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-check text-accent-purple"></i>Strong upstream reference capacity required</div>
+          </div>
+        </div>
+
+        <!-- Pillar C -->
+        <div class="glass rounded-2xl p-8 border-t-4 border-success card-hover">
+          <div class="w-14 h-14 rounded-xl bg-success/20 flex items-center justify-center mb-5">
+            <i class="fas fa-landmark text-success text-2xl"></i>
+          </div>
+          <h3 class="text-lg font-bold text-text-primary mb-3">Alignment with National Health Priorities</h3>
+          <p class="text-text-secondary text-sm mb-4">This initiative directly supports Indonesia's ongoing national health modernization agenda — not an add-on, but a foundational enabler.</p>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-check text-success"></i>Primary healthcare service strengthening</div>
+            <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-check text-success"></i>Enhanced referral coordination mechanisms</div>
+            <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-check text-success"></i>Digital health integration & SATUSEHAT alignment</div>
+            <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-check text-success"></i>Improved health equity across all 34 provinces</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- The Core Tension -->
+      <div class="fade-in">
+        <div class="glass rounded-2xl p-8 border border-accent-purple/30 animated-border">
+          <div class="grid md:grid-cols-3 gap-8 items-center">
+            <div class="text-center p-6 rounded-xl bg-red-500/10 border border-red-500/20">
+              <i class="fas fa-exclamation-triangle text-red-500 text-3xl mb-3"></i>
+              <h4 class="font-bold text-text-primary mb-2">Without an Integrated Lab Backbone</h4>
+              <p class="text-text-secondary text-sm">Variability in testing quality and limited interoperability weaken health system performance at every level — and decentralization without quality governance becomes a liability.</p>
+            </div>
+            <div class="text-center">
+              <div class="text-5xl text-accent-purple mb-2">→</div>
+              <div class="px-4 py-2 rounded-full bg-accent-purple/10 text-accent-purple text-sm font-bold border border-accent-purple/20">This Initiative</div>
+            </div>
+            <div class="text-center p-6 rounded-xl bg-success/10 border border-success/20">
+              <i class="fas fa-check-circle text-success text-3xl mb-3"></i>
+              <h4 class="font-bold text-text-primary mb-2">With a Structured Lab Architecture</h4>
+              <p class="text-text-secondary text-sm">Decentralization is controlled, quality is preserved, data flows intelligently, and every primary care expansion point becomes a quality-assured diagnostic node contributing to national health intelligence.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NRL → POCT/IVD Business Value Section -->
+  <section id="nrl-value" class="py-20 px-4" style="background: linear-gradient(135deg, #f5f3ff 0%, #eff6ff 50%, #f0fdf4 100%);">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-14 fade-in">
+        <span class="inline-block px-4 py-2 rounded-full glass text-accent-purple text-sm font-medium mb-4">
+          <i class="fas fa-link mr-2"></i>Why the NRL Backbone Matters
+        </span>
+        <h2 class="section-title text-3xl md:text-5xl font-bold mb-6 text-text-primary">
+          NRL as the Engine for POCT/IVD Business
+        </h2>
+        <p class="text-text-secondary text-lg max-w-3xl mx-auto">
+          The NRL is not a standalone public health project. It is the foundational infrastructure that makes large-scale, sustainable POCT/IVD commercialization possible — and defensible.
+        </p>
+      </div>
+
+      <!-- The Core Argument: 2-col layout -->
+      <div class="grid md:grid-cols-2 gap-10 mb-14 fade-in items-center">
+        <!-- Left: narrative -->
+        <div>
+          <h3 class="text-2xl font-bold text-text-primary mb-5">Without an NRL, POCT/IVD at scale is not viable</h3>
+          <p class="text-text-secondary text-base mb-5 leading-relaxed">
+            POCT devices deployed without a national quality authority operate in a vacuum — there is no standard to validate against, no EQA program to detect drift, no regulatory backing to justify procurement, and no data infrastructure to aggregate results. Hospitals and clinics bear all the quality risk alone.
+          </p>
+          <p class="text-text-secondary text-base mb-5 leading-relaxed">
+            This is why POCT penetration in Indonesia's primary care network has remained fragmented. It's not a distribution problem — it's a <strong class="text-text-primary">governance and trust problem</strong>. The NRL solves it at the source.
+          </p>
+          <p class="text-text-secondary text-base leading-relaxed">
+            Once the NRL is established, every certification it issues, every EQA program it runs, and every standard it sets <strong class="text-text-primary">becomes a commercial enabler</strong> — creating structured demand for devices, consumables, and QC materials across 5,000+ facilities.
+          </p>
+        </div>
+
+        <!-- Right: value stack diagram -->
+        <div class="space-y-3">
+          <div class="glass rounded-xl p-5 border-l-4 border-accent-purple flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-accent-purple/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <i class="fas fa-award text-accent-purple"></i>
+            </div>
+            <div>
+              <div class="font-bold text-text-primary text-sm mb-1">Standards Authority → Device Validation</div>
+              <p class="text-text-secondary text-xs leading-relaxed">NRL sets the national reference standards against which all POCT devices must be validated. NRL-certified devices gain a procurement advantage that no competitor without NRL affiliation can replicate.</p>
+            </div>
+          </div>
+          <div class="glass rounded-xl p-5 border-l-4 border-accent-blue flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-accent-blue/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <i class="fas fa-vials text-accent-blue"></i>
+            </div>
+            <div>
+              <div class="font-bold text-text-primary text-sm mb-1">EQA Programs → Recurring IVD Consumable Demand</div>
+              <p class="text-text-secondary text-xs leading-relaxed">Every facility in the EQA network requires regular QC materials — calibrators, controls, reagent kits. The NRL's EQA mandate creates a captive, recurring revenue stream for IVD consumable partners.</p>
+            </div>
+          </div>
+          <div class="glass rounded-xl p-5 border-l-4 border-success flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-success/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <i class="fas fa-network-wired text-success"></i>
+            </div>
+            <div>
+              <div class="font-bold text-text-primary text-sm mb-1">LIS/LIMS Network → Data Lock-in & AI Commercialization</div>
+              <p class="text-text-secondary text-xs leading-relaxed">A unified data backbone connecting all facilities creates deep switching costs. Aggregated real-world diagnostic data becomes a platform asset — monetizable through pharma partnerships, insurance analytics, and AI clinical tools.</p>
+            </div>
+          </div>
+          <div class="glass rounded-xl p-5 border-l-4 border-yellow-500 flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-yellow-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <i class="fas fa-industry text-yellow-600"></i>
+            </div>
+            <div>
+              <div class="font-bold text-text-primary text-sm mb-1">Reference Standards → Local IVD Manufacturing</div>
+              <p class="text-text-secondary text-xs leading-relaxed">NRL reference materials are the prerequisite for domestic IVD production certification. No GMP-compliant IVD factory in Indonesia can operate credibly without NRL-issued reference standards for product validation.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- The commercial logic chain — visual flow -->
+      <div class="fade-in">
+        <div class="glass rounded-2xl p-8 border border-accent-purple/20" style="background: rgba(255,255,255,0.9);">
+          <div class="text-center mb-6">
+            <span class="text-xs font-bold text-accent-purple uppercase tracking-widest">The Commercial Logic Chain</span>
+          </div>
+          <div class="flex flex-col md:flex-row items-stretch justify-center gap-2">
+            <div class="text-center p-5 rounded-xl flex-1" style="background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(124,58,237,0.04)); border: 1px solid rgba(124,58,237,0.2);">
+              <div class="w-10 h-10 rounded-full bg-accent-purple flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-award text-white text-sm"></i>
+              </div>
+              <div class="font-bold text-text-primary text-sm mb-1">NRL Authority</div>
+              <div class="text-text-secondary text-xs">National quality standards · ISO 15189 · BPOM alignment</div>
+            </div>
+            <div class="flex items-center justify-center text-accent-purple text-xl font-bold px-1 py-2 md:py-0">→</div>
+            <div class="text-center p-5 rounded-xl flex-1" style="background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(37,99,235,0.04)); border: 1px solid rgba(37,99,235,0.2);">
+              <div class="w-10 h-10 rounded-full bg-accent-blue flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-certificate text-white text-sm"></i>
+              </div>
+              <div class="font-bold text-text-primary text-sm mb-1">POCT Certification</div>
+              <div class="text-text-secondary text-xs">Device validation · EQA programs · QC governance</div>
+            </div>
+            <div class="flex items-center justify-center text-accent-blue text-xl font-bold px-1 py-2 md:py-0">→</div>
+            <div class="text-center p-5 rounded-xl flex-1" style="background: linear-gradient(135deg, rgba(5,150,105,0.08), rgba(5,150,105,0.04)); border: 1px solid rgba(5,150,105,0.2);">
+              <div class="w-10 h-10 rounded-full bg-success flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-network-wired text-white text-sm"></i>
+              </div>
+              <div class="font-bold text-text-primary text-sm mb-1">Market Penetration</div>
+              <div class="text-text-secondary text-xs">5,000+ facilities · LIS data lock-in · JKN reimbursement</div>
+            </div>
+            <div class="flex items-center justify-center text-success text-xl font-bold px-1 py-2 md:py-0">→</div>
+            <div class="text-center p-5 rounded-xl flex-1" style="background: linear-gradient(135deg, rgba(234,179,8,0.08), rgba(234,179,8,0.04)); border: 1px solid rgba(234,179,8,0.25);">
+              <div class="w-10 h-10 rounded-full bg-yellow-500 flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-industry text-white text-sm"></i>
+              </div>
+              <div class="font-bold text-text-primary text-sm mb-1">IVD Manufacturing</div>
+              <div class="text-text-secondary text-xs">Local production · TKDN compliance · ASEAN expansion</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!-- Pain Points Section — compact -->
+  <section id="pain-points" class="py-12 px-4" style="background: #f8faff;">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-10 fade-in">
+        <span class="inline-block px-4 py-2 rounded-full glass text-red-400 text-sm font-medium mb-4">
+          <i class="fas fa-exclamation-triangle mr-2"></i>The Problem
+        </span>
+        <h2 class="section-title text-3xl md:text-4xl font-bold mb-4 text-text-primary">
+          Indonesia's Diagnostic Gap
+        </h2>
+        <p class="text-text-secondary text-base max-w-3xl mx-auto">
+          Four interconnected barriers prevent scalable POCT/IVD deployment — and block Indonesia from a fully effective, AI-ready healthcare system.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 fade-in">
+        <div class="glass rounded-xl p-5 border-l-4 border-red-500">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-9 h-9 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+              <i class="fas fa-file-contract text-red-400"></i>
+            </div>
+            <h3 class="font-bold text-text-primary text-sm">No National Standards</h3>
+          </div>
+          <p class="text-text-secondary text-xs leading-relaxed">No unified diagnostic protocols, no AI validation benchmarks, no localized clinical pathways — POCT devices operate without quality governance.</p>
+        </div>
+
+        <div class="glass rounded-xl p-5 border-l-4 border-yellow-500">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-9 h-9 rounded-lg bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
+              <i class="fas fa-database text-yellow-400"></i>
+            </div>
+            <h3 class="font-bold text-text-primary text-sm">Fragmented Data</h3>
+          </div>
+          <p class="text-text-secondary text-xs leading-relaxed">5,000+ facilities in incompatible formats. Lab results, imaging, and patient histories siloed — interoperability and AI analytics impossible.</p>
+        </div>
+
+        <div class="glass rounded-xl p-5 border-l-4 border-accent-purple">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-9 h-9 rounded-lg bg-accent-purple/20 flex items-center justify-center flex-shrink-0">
+              <i class="fas fa-store-slash text-accent-purple"></i>
+            </div>
+            <h3 class="font-bold text-text-primary text-sm">No Regulatory Pathway</h3>
+          </div>
+          <p class="text-text-secondary text-xs leading-relaxed">No BPOM certification route for AI diagnostics, no JKN reimbursement codes — promising solutions stuck in perpetual pilot with no commercial exit.</p>
+        </div>
+
+        <div class="glass rounded-xl p-5 border-l-4 border-accent-blue">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-9 h-9 rounded-lg bg-accent-blue/20 flex items-center justify-center flex-shrink-0">
+              <i class="fas fa-map-marked-alt text-accent-blue"></i>
+            </div>
+            <h3 class="font-bold text-text-primary text-sm">Weak Lab Infrastructure</h3>
+          </div>
+          <p class="text-text-secondary text-xs leading-relaxed">No tiered reference lab framework, no central POCT quality oversight. Urban–rural diagnostic inequality persists. Redundant testing wastes JKN resources.</p>
+        </div>
+      </div>
+
+      <div class="fade-in">
+        <div class="glass rounded-xl p-5 border border-red-500/20 bg-red-500/5 text-center">
+          <p class="text-text-secondary text-sm">
+            <i class="fas fa-link text-red-400 mr-2"></i>
+            <strong class="text-text-primary">These barriers are interconnected — and the NRL addresses all four simultaneously.</strong>
+            Standards enable QC · QC enables POCT scale · Scale enables IVD manufacturing · Data enables AI commercialization.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!-- Integrated Solution Section -->
+  <section id="solution" class="py-20 px-4" style="background: linear-gradient(180deg, #f8faff 0%, #eef2ff 100%);">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-14 fade-in">
+        <span class="inline-block px-4 py-2 rounded-full glass text-success text-sm font-medium mb-4">
+          <i class="fas fa-cubes mr-2"></i>The Platform Architecture
+        </span>
+        <h2 class="section-title text-3xl md:text-5xl font-bold mb-6 text-text-primary">
+          The "1 + 1 + N + X" National Diagnostic Network
+        </h2>
+        <p class="text-text-secondary text-lg max-w-4xl mx-auto">
+          NRL quality authority flows downward through a tiered network — standardizing every POCT device, governing every EQA program, and connecting every facility through a unified digital backbone. This is how national standards translate into commercial scale.
+        </p>
+      </div>
+
+      <!-- Three Design Principles — the "why it works" -->
+      <div class="grid md:grid-cols-3 gap-6 mb-14 fade-in">
+        <div class="glass rounded-2xl p-6 text-center border-t-4 border-accent-blue">
+          <div class="w-12 h-12 rounded-full bg-accent-blue/20 flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-balance-scale text-accent-blue text-xl"></i>
+          </div>
+          <h4 class="font-bold text-text-primary mb-2">Centralized Standards,<br>Decentralized Revenue</h4>
+          <p class="text-text-secondary text-sm">Quality governance stays central; POCT devices, IVD consumables, and EQA services scale outward — creating recurring revenue at 5,000+ touchpoints without quality dilution.</p>
+        </div>
+        <div class="glass rounded-2xl p-6 text-center border-t-4 border-accent-purple">
+          <div class="w-12 h-12 rounded-full bg-accent-purple/20 flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-plug text-accent-purple text-xl"></i>
+          </div>
+          <h4 class="font-bold text-text-primary mb-2">Data Network<br>as Competitive Moat</h4>
+          <p class="text-text-secondary text-sm">A unified LIS/LIMS connects all facilities — creating switching costs, enabling AI analytics commercialization, and generating the real-world evidence that pharma and insurance partners pay for.</p>
+        </div>
+        <div class="glass rounded-2xl p-6 text-center border-t-4 border-success">
+          <div class="w-12 h-12 rounded-full bg-success/20 flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-route text-success text-xl"></i>
+          </div>
+          <h4 class="font-bold text-text-primary mb-2">Quality Governance<br>Unlocks Procurement</h4>
+          <p class="text-text-secondary text-sm">NRL certification becomes the de facto requirement for POCT device procurement — ensuring NRL-affiliated partners gain preferential access across government and JKN-covered facilities.</p>
+        </div>
+      </div>
+
+      <!-- The 1+1+N+X Layers — visual hierarchy -->
+      <div class="fade-in max-w-5xl mx-auto mb-14">
+
+        <!-- Layer: NRL -->
+        <div class="relative mb-2">
+          <div class="rounded-2xl p-6 border-2 border-accent-purple/50" style="background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(37,99,235,0.06));">
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-5">
+              <div class="flex items-center gap-4 flex-shrink-0">
+                <div class="w-14 h-14 rounded-full bg-accent-purple flex items-center justify-center text-2xl font-black text-white shadow-lg shadow-purple-500/40">1</div>
+                <div>
+                  <div class="text-xs font-bold text-accent-purple uppercase tracking-wider">Layer 1 · Apex</div>
+                  <h3 class="text-lg font-bold text-text-primary">National Reference Laboratory (NRL)</h3>
+                </div>
+              </div>
+              <div class="flex-1">
+                <p class="text-text-secondary text-sm mb-3">The apex technical authority of the national laboratory system. Responsible for national methodology, EQA coordination, biosafety supervision, and scientific policy support.</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-2 py-1 bg-accent-purple/20 text-accent-purple text-xs rounded">Advanced & Complex Testing</span>
+                  <span class="px-2 py-1 bg-accent-purple/20 text-accent-purple text-xs rounded">National EQA Coordination</span>
+                  <span class="px-2 py-1 bg-accent-purple/20 text-accent-purple text-xs rounded">Technical Validation</span>
+                  <span class="px-2 py-1 bg-accent-purple/20 text-accent-purple text-xs rounded">Biosafety & Training</span>
+                  <span class="px-2 py-1 bg-accent-purple/20 text-accent-purple text-xs rounded">International Standards Alignment</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex justify-center my-1"><div class="flex flex-col items-center"><div class="w-0.5 h-3 bg-accent-purple/40"></div><i class="fas fa-chevron-down text-accent-purple/50 text-xs"></i></div></div>
+        </div>
+
+        <!-- Layer: POCT Quality Control Network -->
+        <div class="relative mb-2">
+          <div class="glass rounded-2xl p-6 border-2 border-accent-blue/70 bg-gradient-to-r from-accent-blue/15 to-cyan-500/10">
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-5">
+              <div class="flex items-center gap-4 flex-shrink-0">
+                <div class="w-14 h-14 rounded-full bg-accent-blue flex items-center justify-center text-2xl font-black text-white shadow-lg shadow-blue-500/40">1</div>
+                <div>
+                  <div class="text-xs font-bold text-accent-blue uppercase tracking-wider">Layer 2 · Quality</div>
+                  <h3 class="text-lg font-bold text-text-primary">National POCT Quality Control Network</h3>
+                </div>
+              </div>
+              <div class="flex-1">
+                <p class="text-text-secondary text-sm mb-3">One centralized quality authority governing all decentralized primary-level testing — ensuring that expansion of point-of-care diagnostics never compromises patient safety.</p>
+                <div class="flex flex-wrap gap-2 mb-3">
+                  <span class="px-2 py-1 bg-accent-blue/20 text-accent-blue text-xs rounded">Unified SOPs</span>
+                  <span class="px-2 py-1 bg-blue-100 text-blue-700 border border-blue-200 text-xs rounded font-medium">EQA Programs</span>
+                  <span class="px-2 py-1 bg-accent-blue/20 text-accent-blue text-xs rounded">Real-Time QC Monitoring</span>
+                  <span class="px-2 py-1 bg-accent-blue/20 text-accent-blue text-xs rounded">Automated Anomaly Detection</span>
+                </div>
+                <!-- Result Mutual Recognition highlight -->
+                <div class="p-3 rounded-lg bg-success/10 border border-success/30 flex items-start gap-3">
+                  <i class="fas fa-sync-alt text-success mt-0.5 flex-shrink-0"></i>
+                  <div>
+                    <span class="text-success font-semibold text-xs">Result Mutual Recognition Mechanism: </span>
+                    <span class="text-text-secondary text-xs">Because testing methodologies are standardized, calibration is aligned to national standards, and results are digitally traceable — accredited facilities can mutually recognize results. This reduces redundant repeat testing during referrals, shortens clinical decision time, optimizes laboratory workload, and directly reduces unnecessary healthcare expenditure.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex justify-center my-1"><div class="flex flex-col items-center"><div class="w-0.5 h-3 bg-accent-blue/40"></div><i class="fas fa-chevron-down text-accent-blue/50 text-xs"></i></div></div>
+        </div>
+
+        <!-- Layer: Regional Intelligent Labs -->
+        <div class="relative mb-2">
+          <div class="glass rounded-2xl p-6 border-2 border-success/70 bg-gradient-to-r from-success/15 to-emerald-500/10">
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-5">
+              <div class="flex items-center gap-4 flex-shrink-0">
+                <div class="w-14 h-14 rounded-full bg-success flex items-center justify-center text-2xl font-black text-white shadow-lg shadow-green-500/40">N</div>
+                <div>
+                  <div class="text-xs font-bold text-success uppercase tracking-wider">Layer 3 · Regional</div>
+                  <h3 class="text-lg font-bold text-text-primary">Regional Intelligent Laboratories</h3>
+                </div>
+              </div>
+              <div class="flex-1">
+                <p class="text-text-secondary text-sm mb-3">Operational bridges between national standards and community-level services. They reduce turnaround time, enhance regional equity, improve accessibility, and operationalize national standards locally.</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-2 py-1 bg-success/20 text-success text-xs rounded">Routine & Semi-Complex Testing</span>
+                  <span class="px-2 py-1 bg-success/20 text-success text-xs rounded">Referral Bridge to NRL</span>
+                  <span class="px-2 py-1 bg-success/20 text-success text-xs rounded">Regional EQA Coordination</span>
+                  <span class="px-2 py-1 bg-success/20 text-success text-xs rounded">Sample Logistics & Technical Supervision</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex justify-center my-1"><div class="flex flex-col items-center"><div class="w-0.5 h-3 bg-success/40"></div><i class="fas fa-chevron-down text-success/50 text-xs"></i></div></div>
+        </div>
+
+        <!-- Layer: Primary Care Screening Points -->
+        <div class="relative">
+          <div class="glass rounded-2xl p-6 border-2 border-yellow-500/70 bg-gradient-to-r from-yellow-500/15 to-amber-500/10">
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-5">
+              <div class="flex items-center gap-4 flex-shrink-0">
+                <div class="w-14 h-14 rounded-full bg-yellow-500 flex items-center justify-center text-2xl font-black text-white shadow-lg shadow-yellow-500/40">X</div>
+                <div>
+                  <div class="text-xs font-bold text-yellow-400 uppercase tracking-wider">Layer 4 · Front Line</div>
+                  <h3 class="text-lg font-bold text-text-primary">Primary Care Screening Points</h3>
+                </div>
+              </div>
+              <div class="flex-1">
+                <p class="text-text-secondary text-sm mb-3">The first-contact diagnostic interface — Puskesmas, community clinics, GP practices, Posbindu, and mobile units. All digitally supervised under the POCT network, transforming isolated testing into nationally governed diagnostic nodes.</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded">🏥 Puskesmas</span>
+                  <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded">🏘️ Community Clinics</span>
+                  <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded">👨‍⚕️ GP Workstation POCT</span>
+                  <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded">🚌 Posbindu & Mobile Units</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIS/LIMS Digital Backbone + Data Funnel side by side -->
+      <div class="grid md:grid-cols-2 gap-8 fade-in mb-8">
+        <!-- LIS/LIMS -->
+        <div class="glass rounded-2xl p-8">
+          <h3 class="text-xl font-bold text-text-primary mb-2 flex items-center gap-2">
+            <i class="fas fa-network-wired text-accent-blue"></i>Unified LIS/LIMS Digital Backbone
+          </h3>
+          <p class="text-text-secondary text-sm mb-5">Digital infrastructure is not a separate component — it is the <strong class="text-text-primary">connective tissue</strong> of the entire system. Every layer connects through it.</p>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-50/60">
+              <i class="fas fa-link text-accent-blue text-sm w-4"></i>
+              <span class="text-text-secondary text-sm">Links all laboratory levels and screening sites</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-50/60">
+              <i class="fas fa-fingerprint text-accent-purple text-sm w-4"></i>
+              <span class="text-text-secondary text-sm">End-to-end result traceability across the network</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-50/60">
+              <i class="fas fa-chart-line text-success text-sm w-4"></i>
+              <span class="text-text-secondary text-sm">Real-time QC monitoring & performance benchmarking</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-50/60">
+              <i class="fas fa-exchange-alt text-yellow-400 text-sm w-4"></i>
+              <span class="text-text-secondary text-sm">Result mutual recognition — eliminates redundant retesting</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-50/60">
+              <i class="fas fa-database text-pink-400 text-sm w-4"></i>
+              <span class="text-text-secondary text-sm">SATUSEHAT integration — national health data ecosystem</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Value Funnel -->
+        <div class="glass rounded-2xl p-8">
+          <h3 class="text-xl font-bold text-text-primary mb-2 flex items-center gap-2">
+            <i class="fas fa-filter text-accent-purple"></i>Health Data Value Funnel
+          </h3>
+          <p class="text-text-secondary text-sm mb-5">Raw data is secured at source, then progressively refined into higher-value assets — each layer accessible to the right partners under strict governance.</p>
+          <div class="space-y-1.5 max-w-sm mx-auto">
+            <div class="rounded-t-xl p-3 text-center" style="background: rgba(30,64,175,0.6); border: 1px solid rgba(59,130,246,0.5);">
+              <div class="text-sm font-bold text-white">L1 · Protected Raw Data</div>
+              <div class="text-xs text-blue-200">Patient records · Facility access only · 🔒</div>
+            </div>
+            <div class="p-3 text-center mx-auto" style="width:85%; background: rgba(13,148,136,0.5); border: 1px solid rgba(20,184,166,0.5);">
+              <div class="text-sm font-bold text-white">L2 · Anonymized Datasets</div>
+              <div class="text-xs text-teal-200">Research-grade · Clinical trials · 🔬</div>
+            </div>
+            <div class="p-3 text-center mx-auto" style="width:68%; background: rgba(67,56,202,0.5); border: 1px solid rgba(99,102,241,0.5);">
+              <div class="text-sm font-bold text-white">L3 · Derived Analytics</div>
+              <div class="text-xs text-indigo-200">Statistical aggregates · 🛡️ Insurance · 💊 Pharma RWE</div>
+            </div>
+            <div class="rounded-b-xl p-3 text-center mx-auto" style="width:50%; background: rgba(109,40,217,0.6); border: 1px solid rgba(139,92,246,0.6);">
+              <div class="text-sm font-bold text-white">L4 · AI Outputs</div>
+              <div class="text-xs text-purple-200">Risk scores · 🏥 Hospitals · 📊</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Commercialization Pathway -->
+      <div class="fade-in">
+        <div class="glass rounded-2xl p-8">
+          <div class="flex items-center mb-6">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-success to-emerald-400 flex items-center justify-center mr-4">
+              <i class="fas fa-rocket text-white text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-2xl font-bold text-text-primary">Regulatory & Commercialization Pathway</h3>
+              <p class="text-text-secondary text-sm">Turning validated diagnostic and AI innovations into sustainable market products</p>
+            </div>
+          </div>
+          <div class="grid md:grid-cols-4 gap-4">
+            <div class="p-5 rounded-xl bg-slate-50/60 border-l-4 border-accent-purple">
+              <h4 class="font-bold text-text-primary mb-2 text-sm"><i class="fas fa-flask text-accent-purple mr-2"></i>Regulatory Sandbox</h4>
+              <p class="text-text-secondary text-xs">Pre-certification testing aligned with BPOM requirements for AI medical devices — from pilot to certified product</p>
+            </div>
+            <div class="p-5 rounded-xl bg-slate-50/60 border-l-4 border-accent-blue">
+              <h4 class="font-bold text-text-primary mb-2 text-sm"><i class="fas fa-file-invoice-dollar text-accent-blue mr-2"></i>JKN Reimbursement</h4>
+              <p class="text-text-secondary text-xs">Working with JKN and private insurers to establish AI-assisted diagnostic service coverage codes</p>
+            </div>
+            <div class="p-5 rounded-xl bg-slate-50/60 border-l-4 border-success">
+              <h4 class="font-bold text-text-primary mb-2 text-sm"><i class="fas fa-file-contract text-success mr-2"></i>Procurement Framework</h4>
+              <p class="text-text-secondary text-xs">Standardized contracts and evaluation criteria for hospital and clinic AI technology adoption</p>
+            </div>
+            <div class="p-5 rounded-xl bg-slate-50/60 border-l-4 border-yellow-500">
+              <h4 class="font-bold text-text-primary mb-2 text-sm"><i class="fas fa-store text-yellow-500 mr-2"></i>Innovation Marketplace</h4>
+              <p class="text-text-secondary text-xs">Platform connecting validated AI solutions with healthcare providers, payers, and government agencies</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NRL Disease Detection Capabilities -->
+      <div class="fade-in mt-12">
+        <div class="text-center mb-8">
+          <span class="inline-block px-4 py-2 rounded-full glass text-accent-purple text-sm font-medium mb-3">
+            <i class="fas fa-microscope mr-2"></i>NRL Core Capability
+          </span>
+          <h3 class="text-2xl md:text-3xl font-bold text-text-primary mb-3">NRL Disease Management Capabilities</h3>
+          <p class="text-text-secondary text-base max-w-3xl mx-auto">The National Reference Laboratory serves as the apex diagnostic engine — supporting Indonesia's most critical public health priorities from infectious disease control to chronic disease management and genetic screening.</p>
+        </div>
+
+        <!-- Three pillars: Infectious, Genetic, Chronic -->
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+
+          <!-- Pillar 1: Chronic Disease & NCD Management -->
+          <div class="glass rounded-2xl p-6 border-t-4 border-accent-blue card-hover">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-11 h-11 rounded-xl bg-accent-blue/20 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-heartbeat text-accent-blue text-lg"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-accent-blue uppercase tracking-wider">Chronic Disease & NCD</div>
+                <h4 class="font-bold text-text-primary text-base">Chronic Disease & NCD Management</h4>
+              </div>
+            </div>
+            <!-- Diabetes/NCD highlight -->
+            <div class="p-3 rounded-xl bg-accent-blue/10 border border-accent-blue/30 mb-4">
+              <div class="flex items-center gap-2 mb-1">
+                <i class="fas fa-tint text-accent-blue text-sm"></i>
+                <span class="text-blue-300 font-bold text-sm">Modernizing Indonesia's CDC System</span>
+              </div>
+              <p class="text-text-secondary text-xs">NRL supports the full-cycle Screen–Diagnose–Treat–Rehabilitate–Manage (SDTRM) framework for NCD management. Reference validation for diabetes (HbA1c), cardiovascular markers, metabolic panels, and standardized AI clinical decision pathways.</p>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-xs text-text-secondary">
+                <i class="fas fa-dot-circle text-accent-blue text-xs flex-shrink-0"></i>
+                <span>Diabetes & metabolic syndrome — HbA1c, lipids, insulin</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-text-secondary">
+                <i class="fas fa-dot-circle text-accent-blue text-xs flex-shrink-0"></i>
+                <span>Hypertension & cardiovascular risk stratification</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-text-secondary">
+                <i class="fas fa-dot-circle text-accent-blue text-xs flex-shrink-0"></i>
+                <span>Renal, hepatic & endocrine function panels</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-text-secondary">
+                <i class="fas fa-dot-circle text-accent-blue text-xs flex-shrink-0"></i>
+                <span>Blood disorders — anemia, hematology, coagulation</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-text-secondary">
+                <i class="fas fa-dot-circle text-accent-blue text-xs flex-shrink-0"></i>
+                <span>Respiratory disease diagnostics & prevention AI</span>
+              </div>
+            </div>
+          </div>
+          <!-- Pillar 2: Genetic & Neonatal Screening (UBC core) -->
+          <div class="glass rounded-2xl p-6 border-t-4 border-accent-purple card-hover">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-11 h-11 rounded-xl bg-accent-purple/20 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-dna text-accent-purple text-lg"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-accent-purple uppercase tracking-wider">Genetic & Neonatal</div>
+                <h4 class="font-bold text-text-primary text-base">Genetic & Neonatal Screening</h4>
+              </div>
+            </div>
+            <!-- Neonatal highlight -->
+            <div class="p-3 rounded-xl bg-accent-purple/10 border border-accent-purple/30 mb-4">
+              <div class="flex items-center gap-2 mb-1">
+                <i class="fas fa-baby text-accent-purple text-sm"></i>
+                <span class="text-purple-300 font-bold text-sm">Newborn Screening — UBC Core Business</span>
+              </div>
+              <p class="text-text-secondary text-xs">NRL anchors Indonesia's national newborn screening program — setting reference standards for congenital hypothyroidism, PKU, G6PD deficiency, and other metabolic disorders. Aligned with UBC Medical's core expertise in genetic and neonatal diagnostic solutions.</p>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-xs text-text-secondary">
+                <i class="fas fa-dot-circle text-accent-purple text-xs flex-shrink-0"></i>
+                <span>NGS-based hereditary disease & cancer gene panels</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-text-secondary">
+                <i class="fas fa-dot-circle text-accent-purple text-xs flex-shrink-0"></i>
+                <span>Pathological diagnosis including digital pathology</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-text-secondary">
+                <i class="fas fa-dot-circle text-accent-purple text-xs flex-shrink-0"></i>
+                <span>Pharmacogenomics — personalized drug response testing</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-text-secondary">
+                <i class="fas fa-dot-circle text-accent-purple text-xs flex-shrink-0"></i>
+                <span>Prenatal & reproductive genetic counseling support</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-text-secondary">
+                <i class="fas fa-dot-circle text-accent-purple text-xs flex-shrink-0"></i>
+                <span>Oncology biomarker profiling & tumor genomics</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pillar 3: Infectious Disease Control -->
+          <div class="glass rounded-2xl p-6 border-t-4 border-red-500 card-hover">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-11 h-11 rounded-xl bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-virus text-red-400 text-lg"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-red-400 uppercase tracking-wider">Infectious Disease</div>
+                <h4 class="font-bold text-text-primary text-base">Infectious Disease Control</h4>
+              </div>
+            </div>
+            <!-- TB highlight -->
+            <div class="p-3 rounded-xl bg-red-500/10 border border-red-500/30 mb-4">
+              <div class="flex items-center gap-2 mb-1">
+                <i class="fas fa-lungs text-red-400 text-sm"></i>
+                <span class="text-red-300 font-bold text-sm">TB — Indonesia's #1 Priority</span>
+              </div>
+              <p class="text-text-secondary text-xs">Indonesia has the <strong class="text-text-primary">2nd highest TB burden globally</strong> (~969,000 cases/year). NRL provides advanced molecular diagnostics (GeneXpert, WGS for drug-resistance), culture reference testing, national EQA, and TB AI screening — targeting the WHO End TB strategy.</p>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-xs text-text-secondary">
+                <i class="fas fa-dot-circle text-red-400 text-xs flex-shrink-0"></i>
+                <span>Dengue & tropical infectious disease surveillance</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-text-secondary">
+                <i class="fas fa-dot-circle text-red-400 text-xs flex-shrink-0"></i>
+                <span>HIV/AIDS confirmatory & viral load testing</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-text-secondary">
+                <i class="fas fa-dot-circle text-red-400 text-xs flex-shrink-0"></i>
+                <span>Hepatitis B/C national screening & monitoring</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-text-secondary">
+                <i class="fas fa-dot-circle text-red-400 text-xs flex-shrink-0"></i>
+                <span>Emerging pathogen surveillance & outbreak response</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-text-secondary">
+                <i class="fas fa-dot-circle text-red-400 text-xs flex-shrink-0"></i>
+                <span>Immune function & allergy-related diagnostics</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Full disease capability grid -->
+        <div class="glass rounded-2xl p-6">
+          <h4 class="font-bold text-text-primary mb-4 flex items-center gap-2">
+            <i class="fas fa-list-ul text-accent-purple"></i>Full NRL Detection Capability Spectrum
+          </h4>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-center">
+              <i class="fas fa-bacterium text-red-400 text-lg mb-2 block"></i>
+              <div class="text-xs font-bold text-red-300 mb-1">Infectious Diseases</div>
+            </div>
+            <div class="p-3 rounded-xl bg-orange-500/10 border border-orange-500/20 text-center">
+              <i class="fas fa-ribbon text-orange-400 text-lg mb-2 block"></i>
+              <div class="text-xs font-bold text-orange-300 mb-1">Oncology Biomarkers</div>
+            </div>
+            <div class="p-3 rounded-xl bg-accent-purple/10 border border-accent-purple/20 text-center">
+              <i class="fas fa-dna text-accent-purple text-lg mb-2 block"></i>
+              <div class="text-xs font-bold text-purple-300 mb-1">Genetic & Reproductive</div>
+            </div>
+            <div class="p-3 rounded-xl bg-pink-500/10 border border-pink-500/20 text-center">
+              <i class="fas fa-flask text-pink-400 text-lg mb-2 block"></i>
+              <div class="text-xs font-bold text-pink-300 mb-1">Pathological Diagnosis</div>
+            </div>
+            <div class="p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-center">
+              <i class="fas fa-pills text-yellow-400 text-lg mb-2 block"></i>
+              <div class="text-xs font-bold text-yellow-300 mb-1">Pharmacogenomics</div>
+            </div>
+            <div class="p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-center">
+              <i class="fas fa-allergies text-green-400 text-lg mb-2 block"></i>
+              <div class="text-xs font-bold text-green-300 mb-1">Allergy-Related</div>
+            </div>
+            <div class="p-3 rounded-xl bg-accent-blue/10 border border-accent-blue/20 text-center">
+              <i class="fas fa-tachometer-alt text-accent-blue text-lg mb-2 block"></i>
+              <div class="text-xs font-bold text-blue-300 mb-1">Metabolic Diseases</div>
+            </div>
+            <div class="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-center">
+              <i class="fas fa-heartbeat text-cyan-400 text-lg mb-2 block"></i>
+              <div class="text-xs font-bold text-cyan-300 mb-1">Cardiovascular / Hepatic</div>
+            </div>
+            <div class="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-center">
+              <i class="fas fa-lungs text-indigo-400 text-lg mb-2 block"></i>
+              <div class="text-xs font-bold text-indigo-300 mb-1">Respiratory Diseases</div>
+            </div>
+            <div class="p-3 rounded-xl bg-teal-500/10 border border-teal-500/20 text-center">
+              <i class="fas fa-shield-virus text-teal-400 text-lg mb-2 block"></i>
+              <div class="text-xs font-bold text-teal-300 mb-1">Immune Disorders</div>
+            </div>
+            <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-center">
+              <i class="fas fa-tint text-rose-400 text-lg mb-2 block"></i>
+              <div class="text-xs font-bold text-rose-300 mb-1">Blood / Hematology</div>
+            </div>
+            <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center">
+              <i class="fas fa-baby text-emerald-400 text-lg mb-2 block"></i>
+              <div class="text-xs font-bold text-emerald-300 mb-1">Endocrine Diseases</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- Expected Outcomes Section -->
+  <section id="outcomes" class="py-20 px-4" style="background: linear-gradient(180deg, #eef2ff 0%, #f8faff 100%);">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-14 fade-in">
+        <span class="inline-block px-4 py-2 rounded-full glass text-success text-sm font-medium mb-4">
+          <i class="fas fa-chart-bar mr-2"></i>Expected Outcomes
+        </span>
+        <h2 class="section-title text-3xl md:text-5xl font-bold mb-6 text-text-primary">
+          What This Platform Delivers
+        </h2>
+        <p class="text-text-secondary text-lg max-w-3xl mx-auto">
+          Measurable impact across two dimensions: national public health outcomes that build institutional trust, and commercial outcomes that create a self-sustaining POCT/IVD business.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6 mb-10 fade-in">
+
+        <!-- Outcome 1: Clinical & Public Health -->
+        <div class="glass rounded-2xl p-8 border-l-4 border-accent-blue card-hover">
+          <div class="flex items-center gap-4 mb-5">
+            <div class="w-12 h-12 rounded-xl bg-accent-blue/20 flex items-center justify-center flex-shrink-0">
+              <i class="fas fa-stethoscope text-accent-blue text-xl"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-accent-blue uppercase tracking-wider mb-1">Outcome Category 01</div>
+              <h3 class="text-lg font-bold text-text-primary">Clinical & Public Health</h3>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <div class="flex items-start gap-3">
+              <i class="fas fa-arrow-right text-accent-blue text-sm mt-1 flex-shrink-0"></i>
+              <div><span class="font-semibold text-text-primary text-sm">Improved diagnostic accuracy nationwide</span><p class="text-text-secondary text-xs mt-0.5">Standardized testing protocols mean every patient gets the same quality result — regardless of where they live.</p></div>
+            </div>
+            <div class="flex items-start gap-3">
+              <i class="fas fa-arrow-right text-accent-blue text-sm mt-1 flex-shrink-0"></i>
+              <div><span class="font-semibold text-text-primary text-sm">Enhanced infectious disease detection</span><p class="text-text-secondary text-xs mt-0.5">Primary care screening points become early-warning nodes for TB, dengue, and emerging outbreaks.</p></div>
+            </div>
+            <div class="flex items-start gap-3">
+              <i class="fas fa-arrow-right text-accent-blue text-sm mt-1 flex-shrink-0"></i>
+              <div><span class="font-semibold text-text-primary text-sm">Better chronic disease management</span><p class="text-text-secondary text-xs mt-0.5">AI-assisted pathways for diabetes, hypertension, and cardiovascular disease — localized to Indonesia.</p></div>
+            </div>
+            <div class="flex items-start gap-3">
+              <i class="fas fa-arrow-right text-accent-blue text-sm mt-1 flex-shrink-0"></i>
+              <div><span class="font-semibold text-text-primary text-sm">Faster, more reliable referral pathways</span><p class="text-text-secondary text-xs mt-0.5">Result mutual recognition eliminates repeat testing at every level, cutting clinical decision time.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Outcome 2: System Governance -->
+        <div class="glass rounded-2xl p-8 border-l-4 border-accent-purple card-hover">
+          <div class="flex items-center gap-4 mb-5">
+            <div class="w-12 h-12 rounded-xl bg-accent-purple/20 flex items-center justify-center flex-shrink-0">
+              <i class="fas fa-shield-alt text-accent-purple text-xl"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-accent-purple uppercase tracking-wider mb-1">Outcome Category 02</div>
+              <h3 class="text-lg font-bold text-text-primary">System Governance</h3>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <div class="flex items-start gap-3">
+              <i class="fas fa-arrow-right text-accent-purple text-sm mt-1 flex-shrink-0"></i>
+              <div><span class="font-semibold text-text-primary text-sm">Standardized performance metrics</span><p class="text-text-secondary text-xs mt-0.5">Every lab and screening point measured against the same national benchmark — enabling fair comparison and improvement.</p></div>
+            </div>
+            <div class="flex items-start gap-3">
+              <i class="fas fa-arrow-right text-accent-purple text-sm mt-1 flex-shrink-0"></i>
+              <div><span class="font-semibold text-text-primary text-sm">Improved regulatory oversight</span><p class="text-text-secondary text-xs mt-0.5">NRL and BPOM gain a unified window into diagnostic quality across the entire national network.</p></div>
+            </div>
+            <div class="flex items-start gap-3">
+              <i class="fas fa-arrow-right text-accent-purple text-sm mt-1 flex-shrink-0"></i>
+              <div><span class="font-semibold text-text-primary text-sm">Strengthened biosafety & data governance</span><p class="text-text-secondary text-xs mt-0.5">Centralized oversight ensures that biosafety incidents are detected and contained rapidly across all tiers.</p></div>
+            </div>
+            <div class="flex items-start gap-3">
+              <i class="fas fa-arrow-right text-accent-purple text-sm mt-1 flex-shrink-0"></i>
+              <div><span class="font-semibold text-text-primary text-sm">Increased transparency across regions</span><p class="text-text-secondary text-xs mt-0.5">Dashboards give policymakers, provinces, and the public real-time visibility into system performance.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Outcome 3: Digital & Data -->
+        <div class="glass rounded-2xl p-8 border-l-4 border-success card-hover">
+          <div class="flex items-center gap-4 mb-5">
+            <div class="w-12 h-12 rounded-xl bg-success/20 flex items-center justify-center flex-shrink-0">
+              <i class="fas fa-database text-success text-xl"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-success uppercase tracking-wider mb-1">Outcome Category 03</div>
+              <h3 class="text-lg font-bold text-text-primary">Digital & Data</h3>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <div class="flex items-start gap-3">
+              <i class="fas fa-arrow-right text-success text-sm mt-1 flex-shrink-0"></i>
+              <div><span class="font-semibold text-text-primary text-sm">Integrated laboratory data infrastructure</span><p class="text-text-secondary text-xs mt-0.5">A single, traceable, interoperable data backbone connecting 5,000+ facilities through LIS/LIMS.</p></div>
+            </div>
+            <div class="flex items-start gap-3">
+              <i class="fas fa-arrow-right text-success text-sm mt-1 flex-shrink-0"></i>
+              <div><span class="font-semibold text-text-primary text-sm">Enhanced epidemiological analytics</span><p class="text-text-secondary text-xs mt-0.5">Real-time population health signals from every screening point — transforming surveillance capabilities.</p></div>
+            </div>
+            <div class="flex items-start gap-3">
+              <i class="fas fa-arrow-right text-success text-sm mt-1 flex-shrink-0"></i>
+              <div><span class="font-semibold text-text-primary text-sm">Evidence-based health policy</span><p class="text-text-secondary text-xs mt-0.5">Policymakers gain access to data-driven insights for resource allocation, disease response, and program evaluation.</p></div>
+            </div>
+            <div class="flex items-start gap-3">
+              <i class="fas fa-arrow-right text-success text-sm mt-1 flex-shrink-0"></i>
+              <div><span class="font-semibold text-text-primary text-sm">Interoperable national health data ecosystem</span><p class="text-text-secondary text-xs mt-0.5">Full integration with SATUSEHAT, enabling seamless data flow between primary care, hospitals, and national platforms.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Outcome 4: Equity & Access -->
+        <div class="glass rounded-2xl p-8 border-l-4 border-yellow-500 card-hover">
+          <div class="flex items-center gap-4 mb-5">
+            <div class="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
+              <i class="fas fa-globe-asia text-yellow-400 text-xl"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-yellow-400 uppercase tracking-wider mb-1">Outcome Category 04</div>
+              <h3 class="text-lg font-bold text-text-primary">Equity & Access</h3>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <div class="flex items-start gap-3">
+              <i class="fas fa-arrow-right text-yellow-400 text-sm mt-1 flex-shrink-0"></i>
+              <div><span class="font-semibold text-text-primary text-sm">Reduced diagnostic inequality</span><p class="text-text-secondary text-xs mt-0.5">Patients in Papua and NTT receive the same quality of diagnostic service as those in Jakarta — via the regional lab network and supervised POCT.</p></div>
+            </div>
+            <div class="flex items-start gap-3">
+              <i class="fas fa-arrow-right text-yellow-400 text-sm mt-1 flex-shrink-0"></i>
+              <div><span class="font-semibold text-text-primary text-sm">Improved access to advanced testing</span><p class="text-text-secondary text-xs mt-0.5">Tiered referral pathways ensure complex cases reach the right lab without requiring patients to travel to Jakarta.</p></div>
+            </div>
+            <div class="flex items-start gap-3">
+              <i class="fas fa-arrow-right text-yellow-400 text-sm mt-1 flex-shrink-0"></i>
+              <div><span class="font-semibold text-text-primary text-sm">Consistent service standards across provinces</span><p class="text-text-secondary text-xs mt-0.5">Unified SOPs and EQA programs mean every province is held to — and supported toward — the same quality standard.</p></div>
+            </div>
+            <div class="flex items-start gap-3">
+              <i class="fas fa-arrow-right text-yellow-400 text-sm mt-1 flex-shrink-0"></i>
+              <div><span class="font-semibold text-text-primary text-sm">Sustainable public health financing</span><p class="text-text-secondary text-xs mt-0.5">Mutual recognition reduces redundant testing costs — result: more efficient use of JKN funds, lower per-patient diagnostic expenditure.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- System-level impact summary bar -->
+      <div class="fade-in">
+        <div class="glass rounded-2xl p-6 border border-success/30">
+          <h4 class="text-center font-bold text-text-primary mb-6">System-Level Impact at Scale</h4>
+          <div class="grid grid-cols-2 md:grid-cols-6 gap-4 text-center">
+            <div class="p-4 rounded-xl bg-slate-50/60">
+              <div class="text-2xl font-black text-accent-blue mb-1">34</div>
+              <div class="text-text-secondary text-xs">Provinces Covered</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50/60">
+              <div class="text-2xl font-black text-accent-purple mb-1">5,000+</div>
+              <div class="text-text-secondary text-xs">Facilities Connected</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50/60">
+              <div class="text-2xl font-black text-success mb-1">30%+</div>
+              <div class="text-text-secondary text-xs">Fewer Repeat Tests</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50/60">
+              <div class="text-2xl font-black text-yellow-400 mb-1">↓TAT</div>
+              <div class="text-text-secondary text-xs">Faster Clinical Decisions</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50/60">
+              <div class="text-2xl font-black text-pink-400 mb-1">100+</div>
+              <div class="text-text-secondary text-xs">Standards & SOPs</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50/60">
+              <div class="text-2xl font-black text-orange-400 mb-1">ASEAN</div>
+              <div class="text-text-secondary text-xs">Reference Center</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Partner Ecosystem Section -->
+  <section id="partners" class="py-20 px-4" style="background: linear-gradient(180deg, #eef2ff 0%, #f8faff 100%);">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16 fade-in">
+        <span class="inline-block px-4 py-2 rounded-full glass text-yellow-400 text-sm font-medium mb-4">
+          <i class="fas fa-handshake mr-2"></i>Partner Ecosystem
+        </span>
+        <h2 class="section-title text-3xl md:text-5xl font-bold mb-6 text-text-primary">
+          Tiered Collaboration & Value Co-Creation
+        </h2>
+        <p class="text-text-secondary text-lg max-w-4xl mx-auto">
+          A tiered ecosystem: government & policy bodies set the framework (Tier 1), Indonesian strategic partners anchor local execution (Tier 2), and global commercial partners drive data value and revenue (Tier 3).
+        </p>
+      </div>
+
+      <!-- Market Opportunity -->
+      <div class="fade-in mb-16">
+        <div class="glass rounded-2xl p-8 border border-accent-blue/30">
+          <div class="text-center mb-8">
+            <h3 class="text-2xl font-bold text-text-primary mb-2">Indonesia Health Tech Market Opportunity</h3>
+            <p class="text-text-secondary text-sm">The largest and fastest-growing digital health market in Southeast Asia</p>
+          </div>
+          <div class="grid md:grid-cols-3 gap-6 mb-8">
+            <div class="text-center p-6 rounded-xl bg-accent-blue/10 border border-accent-blue/20">
+              <div class="text-4xl font-black text-accent-blue mb-2">$16B</div>
+              <div class="text-text-primary font-semibold mb-1">Total Market 2023</div>
+              <div class="text-text-secondary text-sm">Health tech transaction value</div>
+            </div>
+            <div class="text-center p-6 rounded-xl bg-accent-purple/10 border border-accent-purple/20">
+              <div class="text-4xl font-black text-accent-purple mb-2">$34B</div>
+              <div class="text-text-primary font-semibold mb-1">Projected 2027</div>
+              <div class="text-text-secondary text-sm">2.1× growth in 4 years</div>
+            </div>
+            <div class="text-center p-6 rounded-xl bg-success/10 border border-success/20">
+              <div class="text-4xl font-black text-success mb-2">221M+</div>
+              <div class="text-text-primary font-semibold mb-1">JKN Coverage</div>
+              <div class="text-text-secondary text-sm">Universal health insurance beneficiaries</div>
+            </div>
+          </div>
+          <div class="max-w-lg mx-auto">
+            <div class="flex items-end gap-8 justify-center" style="height:140px;">
+              <div class="flex flex-col items-center gap-2 justify-end h-full">
+                <div class="text-accent-blue text-sm font-bold">$16B</div>
+                <div class="w-24 bg-accent-blue/70 rounded-t-lg" style="height: 60px;"></div>
+                <div class="text-text-secondary text-xs">2023</div>
+              </div>
+              <div class="flex flex-col items-center gap-2 justify-end h-full">
+                <div class="text-accent-purple text-sm font-bold">$34B</div>
+                <div class="w-24 bg-gradient-to-t from-accent-purple to-accent-blue rounded-t-lg" style="height: 110px;"></div>
+                <div class="text-text-secondary text-xs">2027 (projected)</div>
+              </div>
+            </div>
+            <p class="text-center text-text-secondary text-xs mt-2">Indonesia Health Tech Total Transaction Value</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIER 1: Regulatory & Policy Framework -->
+      <div class="mb-4 fade-in">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="px-4 py-2 rounded-full bg-slate-500/20 border border-slate-500/40 text-slate-300 font-bold text-sm">TIER 1</div>
+          <h3 class="text-xl font-bold text-text-primary">Regulatory & Policy Framework — Governance Layer</h3>
+        </div>
+      </div>
+      <div class="mb-12 fade-in">
+        <div class="glass rounded-2xl p-8 border-l-4 border-slate-400/50">
+          <div class="flex items-center mb-5">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-600 to-slate-500 flex items-center justify-center mr-4">
+              <i class="fas fa-landmark text-white text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-text-primary">Government & Regulatory Bodies</h3>
+              <p class="text-text-secondary text-sm">These institutions define the rules, issue certifications, and set national health standards. They are not commercial partners — they are the governance framework within which the NRL operates.</p>
+            </div>
+          </div>
+          <div class="grid md:grid-cols-3 gap-5">
+            <div class="p-5 rounded-xl bg-white/70 border border-slate-200 border-t-4 border-slate-500">
+              <div class="flex items-center gap-2 mb-3"><span class="text-2xl">🏛️</span><h4 class="font-semibold text-text-primary">Ministry of Health</h4></div>
+              <span class="inline-block px-2 py-1 bg-slate-100 text-slate-600 border border-slate-300 text-xs rounded mb-3 font-medium">Policy & Oversight</span>
+              <ul class="custom-list text-text-secondary text-sm space-y-1">
+                <li>Disease surveillance & early warning</li>
+                <li>Healthcare resource planning</li>
+                <li>Policy effectiveness evaluation</li>
+              </ul>
+            </div>
+            <div class="p-5 rounded-xl bg-white/70 border border-slate-200 border-t-4 border-slate-500">
+              <div class="flex items-center gap-2 mb-3"><span class="text-2xl">📋</span><h4 class="font-semibold text-text-primary">BPOM</h4></div>
+              <span class="inline-block px-2 py-1 bg-slate-100 text-slate-600 border border-slate-300 text-xs rounded mb-3 font-medium">Regulatory Approval</span>
+              <ul class="custom-list text-text-secondary text-sm space-y-1">
+                <li>AI medical device certification pathway</li>
+                <li>Safety monitoring & recall authority</li>
+              </ul>
+            </div>
+            <div class="p-5 rounded-xl bg-white/70 border border-slate-200 border-t-4 border-slate-500">
+              <div class="flex items-center gap-2 mb-3"><span class="text-2xl">🔬</span><h4 class="font-semibold text-text-primary">Research Institutions</h4></div>
+              <span class="inline-block px-2 py-1 bg-slate-100 text-slate-600 border border-slate-300 text-xs rounded mb-3 font-medium">Scientific Legitimacy</span>
+              <ul class="custom-list text-text-secondary text-sm space-y-1">
+                <li>Academic research & publications</li>
+                <li>Clinical trial validation</li>
+                <li>AI algorithm peer review</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIER 2: Indonesian Strategic Partners -->
+      <div class="mb-4 fade-in mt-8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="px-4 py-2 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-sm">TIER 2 · 🇮🇩</div>
+          <h3 class="text-xl font-bold text-text-primary">Indonesian Strategic Partners — Execution Backbone</h3>
+        </div>
+      </div>
+      <div class="mb-12 fade-in">
+        <div class="glass rounded-2xl p-8 border-2 border-orange-400/50 bg-gradient-to-br from-orange-500/5 to-red-500/5">
+          <div class="flex items-center mb-2">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mr-4 flex-shrink-0">
+              <i class="fas fa-star text-white text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-text-primary">Our Most Important Partners</h3>
+              <p class="text-text-secondary text-sm">These Indonesian companies are the cornerstone of the NRL — bringing deep local market access, established government relationships, and complementary capabilities that together cover the full diagnostic value chain.</p>
+            </div>
+          </div>
+
+          <!-- Logo strip -->
+          <div class="flex flex-wrap items-center gap-4 py-5 px-2 mb-6 border-b border-orange-400/20">
+            <!-- UBC Medical logo -->
+            <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/80 border border-orange-400/30">
+              <div class="bg-white rounded px-1 py-0.5 flex items-center"><img src="https://www.google.com/s2/favicons?domain=ubcindonesia.com&sz=128" alt="UBC Medical" class="h-5 w-auto object-contain" onerror="this.style.display='none'"></div>
+              <span class="text-sm font-bold text-text-primary">UBC Medical Indonesia</span>
+              <span class="text-xs text-orange-400 font-semibold ml-1">IDX: LABS</span>
+            </div>
+            <div class="text-slate-600 text-xl font-light">·</div>
+            <!-- Diastika logo -->
+            <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/80 border border-orange-400/30">
+              <div class="bg-white rounded px-1 py-0.5 flex items-center"><img src="https://www.google.com/s2/favicons?domain=diastika.co.id&sz=128" alt="Diastika" class="h-5 w-auto object-contain" onerror="this.style.display='none'"></div>
+              <span class="text-sm font-bold text-text-primary">Diastika Biotekindo</span>
+              <span class="text-xs text-orange-400 font-semibold ml-1">IDX: CHEK</span>
+            </div>
+            <div class="text-slate-600 text-xl font-light">·</div>
+            <!-- Etana logo -->
+            <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/80 border border-orange-400/30">
+              <div class="bg-white rounded px-1 py-0.5 flex items-center"><img src="https://images.squarespace-cdn.com/content/v1/602fb923fb2e6c2319e248e3/cb953d3e-cad2-4824-9932-5f277d56e779/LOGO+NEW+ETANA+2025_COLOUR.png?format=1500w" alt="Etana" class="h-5 w-auto object-contain" style="max-height:20px;"></div>
+              <span class="text-sm font-bold text-text-primary">Etana Biotechnologies</span>
+              <span class="text-xs text-orange-400 font-semibold ml-1">ASEAN mRNA Pioneer</span>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-6">
+
+            <!-- UBC Medical Indonesia -->
+            <div class="partner-case-card rounded-xl p-6 border border-orange-400/30 bg-white/70 border border-slate-200 hover:border-orange-400/70 transition-all">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-14 h-14 rounded-xl bg-white flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
+                  <img src="https://www.google.com/s2/favicons?domain=ubcindonesia.com&sz=128" alt="UBC Medical" class="w-10 h-10 object-contain" onerror="this.outerHTML='<i class=\'fas fa-heartbeat text-white text-xl\'></i>'">
+                </div>
+                <div>
+                  <h4 class="font-bold text-text-primary text-base leading-tight">UBC Medical Indonesia</h4>
+                  <p class="text-xs text-orange-400 font-semibold">IDX: LABS · Est. 2014</p>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-1 mb-3">
+                <span class="px-2 py-0.5 bg-red-100 text-red-700 border border-red-200 text-xs rounded font-medium">Primary Healthcare</span>
+                <span class="px-2 py-0.5 bg-orange-100 text-orange-700 border border-orange-200 text-xs rounded font-medium">NCD Management</span>
+                <span class="px-2 py-0.5 bg-yellow-100 text-yellow-700 border border-yellow-200 text-xs rounded font-medium">POCT Devices</span>
+                <span class="px-2 py-0.5 bg-purple-100 text-purple-700 border border-purple-200 text-xs rounded font-medium">Molecular Testing</span>
+              </div>
+              <p class="text-text-secondary text-sm mb-3">A key builder of Indonesia's primary healthcare capacity and an active participant in the national grassroots health system strengthening program. Beyond infectious disease (TB, dengue, HPV), UBC Medical's core focus is <strong class="text-text-primary">non-communicable disease (NCD) management</strong> — diabetes, hypertension, cardiovascular risk, and metabolic screening — directly aligned with Indonesia's Free Health Screening Program and primary care expansion agenda. Retina AI supports diabetic retinopathy and chronic disease monitoring at community level.</p>
+              <div class="space-y-2 text-xs border-t border-white/10 pt-3">
+                <div class="flex items-start gap-2 text-text-secondary"><i class="fas fa-clinic-medical text-orange-400 mt-0.5 flex-shrink-0"></i><span><strong class="text-text-primary">Primary Care Role:</strong> Equipping Puskesmas, community clinics & GP workstations with standardized POCT devices for NCD screening and chronic disease monitoring at point-of-care</span></div>
+                <div class="flex items-start gap-2 text-text-secondary"><i class="fas fa-database text-orange-400 mt-0.5 flex-shrink-0"></i><span><strong class="text-text-primary">Data Access:</strong> L2 + L3 — Device quality data, NCD screening results, population health analytics</span></div>
+              </div>
+            </div>
+
+            <!-- Diastika Biotekindo -->
+            <div class="partner-case-card rounded-xl p-6 border border-orange-400/30 bg-white/70 border border-slate-200 hover:border-orange-400/70 transition-all">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-14 h-14 rounded-xl bg-white flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
+                  <img src="https://www.google.com/s2/favicons?domain=diastika.co.id&sz=128" alt="Diastika" class="w-10 h-10 object-contain" onerror="this.outerHTML='<i class=\'fas fa-flask text-white text-xl\'></i>'">
+                </div>
+                <div>
+                  <h4 class="font-bold text-text-primary text-base leading-tight">Diastika Biotekindo</h4>
+                  <p class="text-xs text-orange-400 font-semibold">IDX: CHEK · Est. 1989</p>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-1 mb-3">
+                <span class="px-2 py-0.5 bg-orange-100 text-orange-700 border border-orange-200 text-xs rounded font-medium">Lab Equipment</span>
+                <span class="px-2 py-0.5 bg-amber-100 text-amber-700 border border-amber-200 text-xs rounded font-medium">Quality Control</span>
+                <span class="px-2 py-0.5 bg-yellow-100 text-yellow-700 border border-yellow-200 text-xs rounded font-medium">EQA Programs</span>
+              </div>
+              <p class="text-text-secondary text-sm mb-4">Indonesia's most experienced lab solutions distributor. Exclusive Bio-Rad partner and <em>Best Bio-Rad Distributor in SE Asia & HK (2023)</em>. Since 2014, official QC material vendor to Indonesia's 4 National Health Laboratories (BBLabKes). Core expertise: HbA1c monitoring, EQA proficiency programs, NGS sequencing — directly powering the NRL quality governance mission.</p>
+              <div class="space-y-2 text-xs border-t border-white/10 pt-3">
+                <div class="flex items-start gap-2 text-text-secondary"><i class="fas fa-handshake text-orange-400 mt-0.5 flex-shrink-0"></i><span><strong class="text-text-primary">Partnership Value:</strong> QC material supply for POCT network; EQA infrastructure; NGS for genomic reference testing</span></div>
+                <div class="flex items-start gap-2 text-text-secondary"><i class="fas fa-database text-orange-400 mt-0.5 flex-shrink-0"></i><span><strong class="text-text-primary">Data Access:</strong> L2 + L3 — Instrument data, QC benchmarking, EQA analytics</span></div>
+              </div>
+            </div>
+
+            <!-- Etana Biotechnologies -->
+            <div class="partner-case-card rounded-xl p-6 border border-orange-400/30 bg-white/70 border border-slate-200 hover:border-orange-400/70 transition-all">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-14 h-14 rounded-xl bg-white flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
+                  <img src="https://images.squarespace-cdn.com/content/v1/602fb923fb2e6c2319e248e3/cb953d3e-cad2-4824-9932-5f277d56e779/LOGO+NEW+ETANA+2025_COLOUR.png?format=1500w" alt="Etana" class="w-10 h-10 object-contain">
+                </div>
+                <div>
+                  <h4 class="font-bold text-text-primary text-base leading-tight">Etana Biotechnologies</h4>
+                  <p class="text-xs text-orange-400 font-semibold">Est. 2014 · VC-backed</p>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-1 mb-3">
+                <span class="px-2 py-0.5 bg-yellow-100 text-yellow-700 border border-yellow-200 text-xs rounded font-medium">Biopharma</span>
+                <span class="px-2 py-0.5 bg-green-100 text-green-700 border border-green-200 text-xs rounded font-medium">mRNA Platform</span>
+                <span class="px-2 py-0.5 bg-teal-100 text-teal-700 border border-teal-200 text-xs rounded font-medium">Oncology</span>
+              </div>
+              <p class="text-text-secondary text-sm mb-4">Indonesia's leading biopharma innovator — <em>first in ASEAN with mRNA technology</em>. Manufactures biosimilars, monoclonal antibodies, and vaccines at PIC/S GMP-certified facilities. Backed by DEG, East Ventures & Yunfeng Capital. Partnerships with BeiGene (immunotherapy) and Walvax (mRNA). Products: EPO for dialysis, bevacizumab for oncology.</p>
+              <div class="space-y-2 text-xs border-t border-white/10 pt-3">
+                <div class="flex items-start gap-2 text-text-secondary"><i class="fas fa-handshake text-orange-400 mt-0.5 flex-shrink-0"></i><span><strong class="text-text-primary">Partnership Value:</strong> Oncology & metabolic RWE; biosimilar outcome data; mRNA platform for NRL research pipeline</span></div>
+                <div class="flex items-start gap-2 text-text-secondary"><i class="fas fa-database text-orange-400 mt-0.5 flex-shrink-0"></i><span><strong class="text-text-primary">Data Access:</strong> L2 + L3 — Clinical trial data, RWE studies, treatment outcome analytics</span></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Combined value callout -->
+          <div class="mt-6 p-4 rounded-xl bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-400/30 text-center">
+            <i class="fas fa-link text-orange-400 mr-2"></i>
+            <span class="text-text-secondary text-sm"><strong class="text-text-primary">Together, these partners cover the full diagnostic value chain:</strong> UBC Medical builds primary care capacity & NCD screening infrastructure · Diastika anchors lab quality governance & EQA · Etana drives biopharma RWE & next-generation therapeutics</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- IVD Consumables Manufacturing — Strategic Infrastructure -->
+      <div class="mb-12 fade-in">
+        <div class="glass rounded-2xl p-8 border-2 border-accent-purple/40 bg-gradient-to-br from-accent-purple/5 to-accent-blue/5">
+          <div class="flex items-center mb-6">
+            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-accent-purple to-accent-blue flex items-center justify-center mr-4 flex-shrink-0">
+              <i class="fas fa-industry text-white text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-text-primary">IVD Consumables Manufacturing — Indonesia Supply Chain Initiative</h3>
+              <p class="text-text-secondary text-sm">Building a sovereign in-country supply chain to sustain Indonesia's primary healthcare screening programs at scale</p>
+            </div>
+          </div>
+
+          <!-- Strategic Imperative -->
+          <div class="p-5 rounded-xl bg-accent-purple/10 border border-accent-purple/30 mb-6">
+            <h4 class="font-semibold text-text-primary mb-2 flex items-center gap-2">
+              <i class="fas fa-exclamation-circle text-accent-purple"></i>
+              Strategic Imperative
+            </h4>
+            <p class="text-text-secondary text-sm">To fully deliver on Indonesia's <strong class="text-text-primary">Primary Healthcare Strengthening Program</strong> and <strong class="text-text-primary">Free Health Screening Program</strong>, diagnostic services must be underpinned by a reliable, cost-efficient, and locally anchored IVD consumables supply chain. Dependence on imported reagents creates cost volatility, procurement delays, and quality risks — especially at primary care level where volume is highest and supply continuity is most critical. An in-country manufacturing capability is not a back-office logistics concern; it is a strategic prerequisite for sustainable national health coverage.</p>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-8 mb-6">
+            <!-- The Plan -->
+            <div>
+              <h4 class="font-bold text-text-primary mb-4 flex items-center gap-2">
+                <i class="fas fa-map-marked-alt text-accent-blue"></i>
+                In-Country IVD Manufacturing Plan
+              </h4>
+              <div class="space-y-3">
+                <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50/60">
+                  <i class="fas fa-factory text-accent-purple mt-0.5 flex-shrink-0"></i>
+                  <div class="text-sm">
+                    <div class="font-semibold text-text-primary mb-0.5">Local IVD Consumables Factory</div>
+                    <div class="text-text-secondary text-xs">Plan to co-build an Indonesia-based GMP-certified manufacturing facility for IVD reagents and POCT consumables with strategic partners — targeting domestic supply self-sufficiency and BPOM regulatory compliance from day one</div>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50/60">
+                  <i class="fas fa-cubes text-accent-blue mt-0.5 flex-shrink-0"></i>
+                  <div class="text-sm">
+                    <div class="font-semibold text-text-primary mb-0.5">Product Focus</div>
+                    <div class="text-text-secondary text-xs">POCT test strips & cartridges for NCD screening (diabetes / HbA1c, hypertension, lipid panels), infectious disease rapid tests (TB, dengue, HIV), maternal health panels, newborn screening, and QC reference materials for the national EQA network</div>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50/60">
+                  <i class="fas fa-handshake text-success mt-0.5 flex-shrink-0"></i>
+                  <div class="text-sm">
+                    <div class="font-semibold text-text-primary mb-0.5">Partnership Model</div>
+                    <div class="text-text-secondary text-xs">Co-investment with UBC Medical Indonesia and Diastika Biotekindo — leveraging their government distribution networks, BPOM regulatory relationships, and deep knowledge of local clinical demand patterns across 34 provinces</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- How NRL Infrastructure Enables It -->
+            <div>
+              <h4 class="font-bold text-text-primary mb-4 flex items-center gap-2">
+                <i class="fas fa-plug text-success"></i>
+                How the NRL Infrastructure Enables This
+              </h4>
+              <div class="space-y-3">
+                <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50/60">
+                  <i class="fas fa-vials text-accent-purple mt-0.5 flex-shrink-0"></i>
+                  <div class="text-sm">
+                    <div class="font-semibold text-text-primary mb-0.5">Reference Lab as Quality Anchor</div>
+                    <div class="text-text-secondary text-xs">The NRL provides authoritative method validation, lot release testing, and reference standard traceability for all locally manufactured consumables — ensuring every production batch meets the same national diagnostic standards as reference-level testing</div>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50/60">
+                  <i class="fas fa-network-wired text-accent-blue mt-0.5 flex-shrink-0"></i>
+                  <div class="text-sm">
+                    <div class="font-semibold text-text-primary mb-0.5">Unified LIS/LIMS as Demand Signal</div>
+                    <div class="text-text-secondary text-xs">Real-time usage data from 5,000+ connected facilities flows through the unified LIS/LIMS — enabling precise demand forecasting, reducing waste, optimizing production cycles, and ensuring uninterrupted supply to Primary Care Screening Points</div>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50/60">
+                  <i class="fas fa-shield-alt text-success mt-0.5 flex-shrink-0"></i>
+                  <div class="text-sm">
+                    <div class="font-semibold text-text-primary mb-0.5">National POCT QC Network as Post-Market Monitor</div>
+                    <div class="text-text-secondary text-xs">The centralized QC network continuously monitors in-field performance of deployed consumables at all Primary Care Screening Points — providing real-world post-market surveillance data and rapid quality feedback loops to the factory</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Strategic outcome tiles -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="p-3 rounded-xl bg-accent-purple/10 border border-accent-purple/20 text-center">
+              <i class="fas fa-coins text-accent-purple text-xl mb-2"></i>
+              <div class="text-xs font-semibold text-text-primary">Cost Reduction</div>
+              <div class="text-text-secondary text-xs mt-1">Local production lowers per-test consumable cost, making mass screening economically viable at national scale</div>
+            </div>
+            <div class="p-3 rounded-xl bg-accent-blue/10 border border-accent-blue/20 text-center">
+              <i class="fas fa-anchor text-accent-blue text-xl mb-2"></i>
+              <div class="text-xs font-semibold text-text-primary">Supply Security</div>
+              <div class="text-text-secondary text-xs mt-1">In-country production insulates Indonesia from global supply chain disruptions and import dependency</div>
+            </div>
+            <div class="p-3 rounded-xl bg-success/10 border border-success/20 text-center">
+              <i class="fas fa-check-double text-success text-xl mb-2"></i>
+              <div class="text-xs font-semibold text-text-primary">NRL-Validated Quality</div>
+              <div class="text-text-secondary text-xs mt-1">Every lot validated against NRL reference standards — same quality assurance as central laboratory testing</div>
+            </div>
+            <div class="p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-center">
+              <i class="fas fa-flag text-yellow-400 text-xl mb-2"></i>
+              <div class="text-xs font-semibold text-text-primary">TKDN Compliance</div>
+              <div class="text-text-secondary text-xs mt-1">Supports Indonesia's health industry localization mandate and domestic content requirements for government procurement</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIER 3 Label -->
+      <div class="mb-4 fade-in mt-8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="px-4 py-2 rounded-full bg-accent-blue/20 border border-accent-blue/40 text-accent-blue font-bold text-sm">TIER 3</div>
+          <h3 class="text-xl font-bold text-text-primary">Commercial Partners — Revenue Layer</h3>
+        </div>
+      </div>
+
+      <!-- Partner Case Studies -->
+      <div class="mb-12 fade-in">
+        <div class="glass rounded-2xl p-8">
+          <div class="flex items-center mb-6">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-purple to-pink-500 flex items-center justify-center mr-4">
+              <i class="fas fa-lightbulb text-white text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-text-primary">Commercial Partner Use Cases</h3>
+              <p class="text-text-secondary text-sm">Pharma · Insurance · Medical Device Companies — driving real-world evidence and AI adoption</p>
+            </div>
+          </div>
+          
+          <div class="grid md:grid-cols-2 gap-6">
+            <!-- Case 1 -->
+            <div class="partner-case-card glass rounded-xl p-6 border border-accent-purple/30">
+              <div class="flex items-center gap-3 mb-4">
+                <img src="https://www.google.com/s2/favicons?domain=gsk.com&sz=128" alt="GSK" class="h-10 w-auto object-contain">
+                <div>
+                  <h4 class="font-bold text-text-primary">GSK × Respiratory Health</h4>
+                  <p class="text-xs text-text-secondary">Access: L2 + L3</p>
+                </div>
+              </div>
+              <p class="text-text-secondary text-sm mb-3">Customized Indonesia-specific respiratory disease prevention AI guidelines, incorporating local environmental factors and disease patterns.</p>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-1 bg-accent-purple/20 text-accent-purple text-xs rounded">TB Detection</span>
+                <span class="px-2 py-1 bg-accent-blue/20 text-accent-blue text-xs rounded">Asthma Management</span>
+              </div>
+            </div>
+
+            <!-- Case 2 -->
+            <div class="partner-case-card glass rounded-xl p-6 border border-accent-blue/30">
+              <div class="flex items-center gap-3 mb-4">
+                <img src="https://www.google.com/s2/favicons?domain=lilly.com&sz=128" alt="Eli Lilly" class="h-10 w-auto object-contain">
+                <div>
+                  <h4 class="font-bold text-text-primary">Eli Lilly × Metabolic Management</h4>
+                  <p class="text-xs text-text-secondary">Access: L2 + L3</p>
+                </div>
+              </div>
+              <p class="text-text-secondary text-sm mb-3">AI-powered chronic disease management intervention programs tailored for Indonesian patient populations and healthcare delivery systems.</p>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-1 bg-accent-blue/20 text-accent-blue text-xs rounded">Diabetes Care</span>
+                <span class="px-2 py-1 bg-success/20 text-success text-xs rounded">Lifestyle AI</span>
+              </div>
+            </div>
+
+            <!-- Case 3 -->
+            <div class="partner-case-card glass rounded-xl p-6 border border-success/30">
+              <div class="flex items-center gap-3 mb-4">
+                <img src="https://www.google.com/s2/favicons?domain=jnj.com&sz=128" alt="Johnson & Johnson" class="h-10 w-auto object-contain">
+                <div>
+                  <h4 class="font-bold text-text-primary">Johnson & Johnson × Smart Surgery</h4>
+                  <p class="text-xs text-text-secondary">Access: L2 + L3</p>
+                </div>
+              </div>
+              <p class="text-text-secondary text-sm mb-3">Imaging data-driven operating room efficiency optimization, reducing surgical complications and improving patient outcomes.</p>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-1 bg-success/20 text-success text-xs rounded">Surgical AI</span>
+                <span class="px-2 py-1 bg-accent-purple/20 text-accent-purple text-xs rounded">Imaging Analytics</span>
+              </div>
+            </div>
+
+            <!-- Case 4 -->
+            <div class="partner-case-card glass rounded-xl p-6 border border-yellow-500/30">
+              <div class="flex items-center gap-3 mb-4">
+                <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2265%22%20height%3D%2265%22%20viewBox%3D%220%200%2065%2065%22%3E%0A%20%20%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%0A%20%20%20%20%3Cg%20fill%3D%22%23D31145%22%3E%0A%20%20%20%20%20%20%20%20%3Cg%3E%0A%20%20%20%20%20%20%20%20%20%20%20%3Cpath%20d%3D%22M50.354%2031.138c-1.705.36-2.23-1.118-3.648-2.054-1.423-.937-2.728-1.296-4.045-2.604-.529-.528-.664-1.429-1.19-1.98-.701-.746-1.128-.95-2.08-1.321-1.67-.648-3.103-1.128-4.491-2.27-.235-.19-.786-.444-1.301-.54-.22-.047-.319-.012-.393.072-.207.266-.396.587-.58.889-.051.083-.222.325-.36.456-.269.24-.604.552-.86.695-1.397.853-3.237%201.574-4.031%203.003-.147.262-1.67.972-2.022%201.246-.553.456-1.096.901-1.665%201.321-.532.397-1.269%201.009-1.824%201.417-.293-.107-.593-.203-.87-.25-.654-.134-1.204-.638-1.766-.973-.721-.457-.667-.504-.895-.638-.199-.107-.297-.179-.374-.214-.536-.314-.568%200-1.329.467-.634.385-1.365%201.032-1.91%201.548-.435.409-.878.841-1.332%201.285.651-9.82%208.958-17.573%2019.114-17.573%2010.054%200%2018.294%207.61%2019.089%2017.284-.31.409-.75.627-1.237.734zM32.49%2010.833c-11.212%200-20.301%209.056-20.301%2020.225%200%204.655%201.58%208.925%204.23%2012.344l.554-.457c-1.475-1.99-2.563-4.27-3.156-6.752.171.036.378.095.72.202%201.128.361%203.255%201.055%204.787.361.974-.456%202.67-.829%203.32-1.08.616-.252%201.917.311.382-.696h-.008c-.02-.012-.044-.024-.078-.036-.051-.024-.101-.036-.159-.048-.15-.036-1.381.203-1.654.168-.085-.024-.167-.049-.248-.096-.668-.36%202.183-2.578%202.277-3.132-.819.086-1.494.602-2.226.924-.86.373-1.804.385-2.726.396-1.054%200-1.874.817-2.8%201.19-.485.202-1.28.383-1.817.73-.04-.227-.074-.456-.104-.683.017-.397.06-.877.158-1.428.211-1.2.7-2.136%201.788-3.575%200%200%201.06-1.27%201.679-1.679.24-.169.5-.395.756-.24.27.169-.075%201.212.649%201.391.437.096.051.816.202%201.236.16.444-1.8%202.159-1.283%202.363.288.12%201.587-.539%202.276-.756.608-.191.201.255-.203%201.921-.828.686-.636%201.366-.996%201.366-.996.558-.468%201.1-.947%201.65-1.415.537-.468%201.05-.948%201.57-1.428.326-.31%201.799-1.126%201.93-1.403.685-1.475%202.473-2.34%203.803-3.275.244-.167.509-.528.66-.73.15-.205.31-.516.397-.614.169-.191.21-.334.4-.43.076-.038.376-.038.506.108.433.456%201.023.852%201.044%201.331.037.743%202.125%201.392%202.601%201.968.196.239.311.467.392.694-.364-.143-.723-.322-1.041-.55-.211-.156-.703-.12-.954-.156-.722-.134-.555.203-.156.61.409.433.884.793%201.257%201.261.43.528.391.96.507%201.595.128.673.532%201.26.863%201.86.336.598.313%201.235.5%201.883.201.646.754%201.188.201.212%201.668.39.406%201.28.404%201.766%201.187.516-.215%201.157.407%201.35.228.196-.169-.517-.997-.244-1.248.274-.253%201.46.143%201.705.9.276.888.247.96.204%201.594-.03.42-.196.757-.479%201.055-.352.349-1.168.936-1.007%201.526.748-.396%201.562-.432%202.398-.408.81.024%201.407-.313%201.949-.888.24-.253.929-1.056%201.32-.647.238.238-.457%201.222.306%201.019.508-.133.961-.528%201.422-.78.123-.072.237-.144.335-.215-.602%202.518-1.714%204.845-3.227%206.86l.556.456c2.688-3.43%204.302-7.749%204.302-12.439%200-11.17-9.092-20.225-20.302-20.225zm-7.244%2032.17c-.032.213-.33%202.054-.656%204.087-.598-.133-1.193-.358-1.86-.726-.664-.369-1.168-.747-1.591-1.186%201.557-1.355%202.963-2.578%203.137-2.72.42-.357.625-.44.82-.333.192.106.233.332.15.878zm1.106-2.96s-.05-.035-.107-.062c-.054-.024-.094-.047-.099-.06.003.013.005.013.005.013-.953-.527-1.894-.502-2.977.288-1.495%201.076-8.693%207.143-8.693%207.143l2.077%201.76s1.154-1.005%202.569-2.226c.694.61%201.474%201.162%202.352%201.652.87.479%201.76.848%202.643%201.1l-.544%203.363%202.592.826s1.375-9.298%201.505-11.13c.099-1.328-.379-2.141-1.323-2.667zm4.72%2014.124h2.728V40.884H31.07v13.283zm10.952-7.791c-.67.368-1.265.58-1.86.714-.321-2.033-.61-3.874-.65-4.087-.079-.546-.04-.76.156-.878.19-.107.4-.024.814.332.18.154%201.587%201.378%203.14%202.732-.426.428-.93.818-1.6%201.187zm-3.508-6.452c-.005.012-.048.036-.106.06-.054.026-.094.05-.094.05-.948.526-1.434%201.338-1.339%202.666.134%201.843%201.491%2011.14%201.491%2011.14l2.596-.826-.535-3.35c.883-.264%201.772-.633%202.65-1.112.87-.479%201.655-1.043%202.343-1.652%201.415%201.233%202.573%202.25%202.25%202.25l2.078-1.76s-7.19-6.09-8.682-7.166c-1.078-.79-2.024-.815-2.975-.3zm-2.391-4.816c-.23-.203-.72-.646-.97-1.402-.238-.716-.599-1.29-1.203-1.757-1.075-.84-3.62-2.109-3.445-3.822.08-.765%201.006-.922%201.385-1.484.23-.322.262-.765.534-1.066.305-.348-.124-.348-.423-.371-.64-.024-1.118.672-1.65.958-.872.455-1.656%201.103-2.638%201.317-.288.06-1.756.515-.799.756.656.166%201.39.119%201.933.586.698.597%201.265%201.365%201.966%201.963.355.3.701.586.99.957.333.432.29.923.537%201.366.238.43.708.047%201%20.288.959.789-.374%201.172-.718%201.544-.45.491-.537.803-1.36%201.136-.364.146-2.726.432-3.014.649-.291.214-.138.286-.063.37.077.085.481.216.662.227.992.096%204.044.67%204.67-.107.427-.538%201.061-.6%201.765-.407.495.131%201.475.036%202.326-.312.492-.203%201.854-.215%201.472-.42-.47-.91-2.12-.202-2.957-.97z%22%20transform%3D%22translate%28-72.000000%2C%20-278.000000%29%20translate%2856.000000%2C%20271.000000%29%20translate%2816.000000%2C%207.000000%29%22%2F%3E%0A%20%20%20%20%20%20%20%3C%2Fg%3E%0A%20%20%20%20%20%20%20%3C%2Fg%3E%0A%20%20%20%3C%2Fg%3E%0A%20%20%3C%2Fsvg%3E" alt="AIA" class="h-10 w-auto object-contain">
+                <div>
+                  <h4 class="font-bold text-text-primary">AIA × Smart Insurance</h4>
+                  <p class="text-xs text-text-secondary">Access: L3 + L4</p>
+                </div>
+              </div>
+              <p class="text-text-secondary text-sm mb-3">AI-based precision insurance pricing and green channel services, enabling personalized coverage and faster claims processing.</p>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded">Risk Prediction</span>
+                <span class="px-2 py-1 bg-accent-blue/20 text-accent-blue text-xs rounded">Fast Claims</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Other Partners -->
+      <div class="grid md:grid-cols-2 gap-8">
+        <!-- Pharma -->
+        <div class="fade-in">
+          <div class="glass rounded-2xl p-8">
+            <div class="flex items-center mb-6">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mr-4">
+                <i class="fas fa-pills text-white text-xl"></i>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-text-primary">Pharmaceutical Partners</h3>
+                <p class="text-text-secondary text-sm">Access: L2 + L3 Data</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-3 mb-4 justify-center md:justify-start">
+              <div class="px-3 py-2 glass rounded-lg flex items-center gap-2">
+                <img src="https://www.google.com/s2/favicons?domain=gsk.com&sz=128" alt="GSK" class="h-6 w-auto object-contain">
+                <span class="text-sm">GSK</span>
+              </div>
+              <div class="px-3 py-2 glass rounded-lg flex items-center gap-2">
+                <img src="https://www.google.com/s2/favicons?domain=lilly.com&sz=128" alt="Eli Lilly" class="h-6 w-auto object-contain">
+                <span class="text-sm">Eli Lilly</span>
+              </div>
+              <div class="px-3 py-2 glass rounded-lg flex items-center gap-2">
+                <img src="https://www.google.com/s2/favicons?domain=novartis.com&sz=128" alt="Novartis" class="h-6 w-auto object-contain">
+                <span class="text-sm">Novartis</span>
+              </div>
+              <div class="px-3 py-2 glass rounded-lg flex items-center gap-2">
+                <img src="https://www.google.com/s2/favicons?domain=pfizer.com&sz=128" alt="Pfizer" class="h-6 w-auto object-contain">
+                <span class="text-sm">Pfizer</span>
+              </div>
+              <div class="px-3 py-2 glass rounded-lg flex items-center gap-2">
+                <img src="https://www.google.com/s2/favicons?domain=jnj.com&sz=128" alt="J&J" class="h-6 w-auto object-contain">
+                <span class="text-sm">J&J</span>
+              </div>
+              <div class="px-3 py-2 glass rounded-lg flex items-center gap-2">
+                <img src="https://www.google.com/s2/favicons?domain=astrazeneca.com&sz=128" alt="AstraZeneca" class="h-6 w-auto object-contain">
+                <span class="text-sm">AstraZeneca</span>
+              </div>
+              <div class="px-3 py-2 glass rounded-lg flex items-center gap-2">
+                <img src="https://www.google.com/s2/favicons?domain=sanofi.com&sz=128" alt="Sanofi" class="h-6 w-auto object-contain">
+                <span class="text-sm">Sanofi</span>
+              </div>
+              <div class="px-3 py-2 glass rounded-lg flex items-center gap-2">
+                <img src="https://www.google.com/s2/favicons?domain=kalbefarma.co.id&sz=128" alt="Kalbe" class="h-6 w-auto object-contain">
+                <span class="text-sm">Kalbe</span>
+              </div>
+            </div>
+            <p class="text-text-secondary text-sm"><strong>Use Cases:</strong> RWE studies, Clinical trials, Safety surveillance</p>
+          </div>
+        </div>
+
+        <!-- Insurance & Devices -->
+        <div class="fade-in space-y-8">
+          <div class="glass rounded-2xl p-8">
+            <div class="flex items-center mb-4">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mr-3">
+                <i class="fas fa-shield-alt text-white"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-text-primary">Insurance Partners</h3>
+                <p class="text-text-secondary text-xs">Access: L3 + L4</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-2 justify-center md:justify-start">
+              <div class="px-2 py-1 glass rounded flex items-center gap-2">
+                <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2265%22%20height%3D%2265%22%20viewBox%3D%220%200%2065%2065%22%3E%0A%20%20%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%0A%20%20%20%20%3Cg%20fill%3D%22%23D31145%22%3E%0A%20%20%20%20%20%20%20%20%20%3Cg%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cpath%20d%3D%22M50.354%2031.138c-1.705.36-2.23-1.118-3.648-2.054-1.423-.937-2.728-1.296-4.045-2.604-.529-.528-.664-1.429-1.19-1.98-.701-.746-1.128-.95-2.08-1.321-1.67-.648-3.103-1.128-4.491-2.27-.235-.19-.786-.444-1.301-.54-.22-.047-.319-.012-.393.072-.207.266-.396.587-.58.889-.051.083-.222.325-.36.456-.269.24-.604.552-.86.695-1.397.853-3.237%201.574-4.031%203.003-.147.262-1.67.972-2.022%201.246-.553.456-1.096.901-1.665%201.321-.532.397-1.269%201.009-1.824%201.417-.293-.107-.593-.203-.87-.25-.654-.134-1.204-.638-1.766-.973-.721-.457-.667-.504-.895-.638-.199-.107-.297-.179-.374-.214-.536-.314-.568%200-1.329.467-.634.385-1.365%201.032-1.91%201.548-.435.409-.878.841-1.332%201.285.651-9.82%208.958-17.573%2019.114-17.573%2010.054%200%2018.294%207.61%2019.089%2017.284-.31.409-.75.627-1.237.734zM32.49%2010.833c-11.212%200-20.301%209.056-20.301%2020.225%200%204.655%201.58%208.925%204.23%2012.344l.554-.457c-1.475-1.99-2.563-4.27-3.156-6.752.171.036.378.095.72.202%201.128.361%203.255%201.055%204.787.361.974-.456%202.67-.829%203.32-1.08.616-.252%201.917.311.382-.696h-.008c-.02-.012-.044-.024-.078-.036-.051-.024-.101-.036-.159-.048-.15-.036-1.381.203-1.654.168-.085-.024-.167-.049-.248-.096-.668-.36%202.183-2.578%202.277-3.132-.819.086-1.494.602-2.226.924-.86.373-1.804.385-2.726.396-1.054%200-1.874.817-2.8%201.19-.485.202-1.28.383-1.817.73-.04-.227-.074-.456-.104-.683.017-.397.06-.877.158-1.428.211-1.2.7-2.136%201.788-3.575%200%200%201.06-1.27%201.679-1.679.24-.169.5-.395.756-.24.27.169-.075%201.212.649%201.391.437.096.051.816.202%201.236.16.444-1.8%202.159-1.283%202.363.288.12%201.587-.539%202.276-.756.608-.191%201.255-.203%201.921-.828.686-.636%201.366-.996%201.366-.996.558-.468%201.1-.947%201.65-1.415.537-.468%201.05-.948%201.57-1.428.326-.31%201.799-1.126%201.93-1.403.685-1.475%202.473-2.34%203.803-3.275.244-.167.509-.528.66-.73.15-.205.31-.516.397-.614.169-.191.21-.334.4-.43.076-.038.376-.038.506.108.433.456%201.023.852%201.044%201.331.037.743%202.125%201.392%202.601%201.968.196.239.311.467.392.694-.364-.143-.723-.322-1.041-.55-.211-.156-.703-.12-.954-.156-.722-.134-.555.203-.156.61.409.433.884.793%201.257%201.261.43.528.391.96.507%201.595.128.673.532%201.26.863%201.86.336.598.313%201.235.5%201.883.201.646.754%201.188%201.212%201.668.39.406%201.28.404%201.766%201.187.516-.215%201.157.407%201.35.228.196-.169-.517-.997-.244-1.248.274-.253%201.46.143%201.705.9.276.888.247.96.204%201.594-.03.42-.196.757-.479%201.055-.352.349-1.168.936-1.007%201.526.748-.396%201.562-.432%202.398-.408.81.024%201.407-.313%201.949-.888.24-.253.929-1.056%201.32-.647.238.238-.457%201.222.306%201.019.508-.133.961-.528%201.422-.78.123-.072.237-.144.335-.215-.602%202.518-1.714%204.845-3.227%206.86l.556.456c2.688-3.43%204.302-7.749%204.302-12.439%200-11.17-9.092-20.225-20.302-20.225zm-7.244%2032.17c-.032.213-.33%202.054-.656%204.087-.598-.133-1.193-.358-1.86-.726-.664-.369-1.168-.747-1.591-1.186%201.557-1.355%202.963-2.578%203.137-2.72.42-.357.625-.44.82-.333.192.106.233.332.15.878zm1.106-2.96s-.05-.035-.107-.062c-.054-.024-.094-.047-.099-.06.003.013.005.013.005.013-.953-.527-1.894-.502-2.977.288-1.495%201.076-8.693%207.143-8.693%207.143l2.077%201.76s1.154-1.005%202.569-2.226c.694.61%201.474%201.162%202.352%201.652.87.479%201.76.848%202.643%201.1l-.544%203.363%202.592.826s1.375-9.298%201.505-11.13c.099-1.328-.379-2.141-1.323-2.667zm4.72%2014.124h2.728V40.884H31.07v13.283zm10.952-7.791c-.67.368-1.265.58-1.86.714-.321-2.033-.61-3.874-.65-4.087-.079-.546-.04-.76.156-.878.19-.107.4-.024.814.332.18.154%201.587%201.378%203.14%202.732-.426.428-.93.818-1.6%201.187zm-3.508-6.452c-.005.012-.048.036-.106.06-.054.026-.094.05-.094.05-.948.526-1.434%201.338-1.339%202.666.134%201.843%201.491%2011.14%201.491%2011.14l2.596-.826-.535-3.35c.883-.264%201.772-.633%202.65-1.112.87-.479%201.655-1.043%202.343-1.652%201.415%201.233%202.573%202.25%202.25%202.25l2.078-1.76s-7.19-6.09-8.682-7.166c-1.078-.79-2.024-.815-2.975-.3zm-2.391-4.816c-.23-.203-.72-.646-.97-1.402-.238-.716-.599-1.29-1.203-1.757-1.075-.84-3.62-2.109-3.445-3.822.08-.765%201.006-.922%201.385-1.484.23-.322.262-.765.534-1.066.305-.348-.124-.348-.423-.371-.64-.024-1.118.672-1.65.958-.872.455-1.656%201.103-2.638%201.317-.288.06-1.756.515-.799.756.656.166%201.39.119%201.933.586.698.597%201.265%201.365%201.966%201.963.355.3.701.586.99.957.333.432.29.923.537%201.366.238.43.708.047%201%20.288.959.789-.374%201.172-.718%201.544-.45.491-.537.803-1.36%201.136-.364.146-2.726.432-3.014.649-.291.214-.138.286-.063.37.077.085.481.216.662.227.992.096%204.044.67%204.67-.107.427-.538%201.061-.6%201.765-.407.495.131%201.475.036%202.326-.312.492-.203%201.854-.215%201.472-.42-.47-.91-2.12-.202-2.957-.97z%22%20transform%3D%22translate%28-72.000000%2C%20-278.000000%29%20translate%2856.000000%2C%20271.000000%29%20translate%2816.000000%2C%207.000000%29%22%2F%3E%0A%20%20%20%20%20%20%20%20%20%3C%2Fg%3E%0A%20%20%20%20%20%20%20%20%3C%2Fg%3E%0A%20%20%20%3C%2Fg%3E%0A%20%20%3C%2Fsvg%3E" alt="AIA" class="h-5 w-auto object-contain">
+                <span class="text-xs">AIA</span>
+              </div>
+              <div class="px-2 py-1 glass rounded flex items-center gap-2">
+                <img src="https://www.google.com/s2/favicons?domain=prudential.com&sz=128" alt="Prudential" class="h-5 w-auto object-contain">
+                <span class="text-xs">Prudential</span>
+              </div>
+              <div class="px-2 py-1 glass rounded flex items-center gap-2">
+                <img src="https://www.google.com/s2/favicons?domain=allianz.com&sz=128" alt="Allianz" class="h-5 w-auto object-contain">
+                <span class="text-xs">Allianz</span>
+              </div>
+            </div>
+            <p class="text-text-secondary text-xs">Precision underwriting, Risk prediction</p>
+          </div>
+
+          <div class="glass rounded-2xl p-8">
+            <div class="flex items-center mb-4">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mr-3">
+                <i class="fas fa-microscope text-white"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-text-primary">Medical Device Partners</h3>
+                <p class="text-text-secondary text-xs">Access: L2 + L3</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-2 justify-center md:justify-start">
+              <div class="px-2 py-1 glass rounded flex items-center gap-2">
+                <img src="https://www.google.com/s2/favicons?domain=philips.com&sz=128" alt="Philips" class="h-5 w-auto object-contain">
+                <span class="text-xs">Philips</span>
+              </div>
+              <div class="px-2 py-1 glass rounded flex items-center gap-2">
+                <img src="https://www.google.com/s2/favicons?domain=ge.com&sz=128" alt="GE Healthcare" class="h-5 w-auto object-contain">
+                <span class="text-xs">GE Healthcare</span>
+              </div>
+              <div class="px-2 py-1 glass rounded flex items-center gap-2">
+                <img src="https://www.google.com/s2/favicons?domain=siemens.com&sz=128" alt="Siemens" class="h-5 w-auto object-contain">
+                <span class="text-xs">Siemens</span>
+              </div>
+            </div>
+            <p class="text-text-secondary text-xs">AI imaging models, Device effectiveness</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security Architecture Section -->
+  <section id="security" class="py-20 px-4" style="background: #f8faff;">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16 fade-in">
+        <span class="inline-block px-4 py-2 rounded-full glass text-red-400 text-sm font-medium mb-4">
+          <i class="fas fa-lock mr-2"></i>Security First
+        </span>
+        <h2 class="section-title text-3xl md:text-5xl font-bold mb-4 text-text-primary">
+          Security-First Architecture
+        </h2>
+        <div class="flex items-center justify-center gap-2 mb-6">
+          <span class="text-lg text-accent-blue font-medium">Technology from SG</span>
+          <span class="text-lg text-text-secondary">•</span>
+          <span class="text-lg text-accent-purple font-medium">Empowered by NTU Security AI Lab</span>
+          <span class="text-xl">🇸🇬🎓</span>
+        </div>
+        <p class="text-text-secondary text-lg max-w-4xl mx-auto">
+          In healthcare AI, security is not a feature—it's the foundation. Our platform was designed from the ground up with a "security-first" philosophy.
+        </p>
+      </div>
+
+      <!-- Ecosystem Enablers -->
+      <div class="mb-6 fade-in">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="px-4 py-2 rounded-full bg-success/20 border border-success/40 text-success font-bold text-sm">ECOSYSTEM ENABLERS</div>
+          <h3 class="text-xl font-bold text-text-primary">Growth & Capacity Layer</h3>
+        </div>
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="glass rounded-2xl p-6">
+            <div class="w-10 h-10 rounded-lg bg-success/20 flex items-center justify-center mb-4">
+              <i class="fas fa-laptop-medical text-success"></i>
+            </div>
+            <h4 class="font-bold text-text-primary mb-2">Digital Health / SaaS</h4>
+            <ul class="custom-list text-text-secondary text-sm space-y-2">
+              <li>EHR vendors: embed AI diagnostic capabilities</li>
+              <li>Telemedicine platforms: AI-assisted triage & diagnosis</li>
+              <li>Patient engagement apps: personalized health recommendations</li>
+            </ul>
+          </div>
+          <div class="glass rounded-2xl p-6">
+            <div class="w-10 h-10 rounded-lg bg-accent-blue/20 flex items-center justify-center mb-4">
+              <i class="fas fa-university text-accent-blue"></i>
+            </div>
+            <h4 class="font-bold text-text-primary mb-2">Research Institutions</h4>
+            <ul class="custom-list text-text-secondary text-sm space-y-2">
+              <li>Universities: collaborative research & talent pipeline</li>
+              <li>Teaching hospitals: clinical validation & specialist expertise</li>
+              <li>BRIN: research sandbox & academic legitimacy</li>
+            </ul>
+          </div>
+          <div class="glass rounded-2xl p-6">
+            <div class="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center mb-4">
+              <i class="fas fa-globe text-yellow-400"></i>
+            </div>
+            <h4 class="font-bold text-text-primary mb-2">Development Partners</h4>
+            <ul class="custom-list text-text-secondary text-sm space-y-2">
+              <li>International health organizations (WHO, etc.)</li>
+              <li>Development banks: financing & capacity building</li>
+              <li>ASEAN regional cooperation networks</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compliance Table -->
+      <div class="glass rounded-2xl p-8 fade-in">
+        <h3 class="text-xl font-bold text-text-primary mb-6">Compliance & Certifications</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-accent-purple/30">
+                <th class="text-left py-4 px-4 text-text-primary font-semibold">Standard</th>
+                <th class="text-left py-4 px-4 text-text-primary font-semibold">Status</th>
+                <th class="text-left py-4 px-4 text-text-primary font-semibold">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-secondary-bg">
+                <td class="py-4 px-4 text-text-primary font-medium">Indonesia UU PDP</td>
+                <td class="py-4 px-4"><span class="px-3 py-1 rounded-full bg-success/20 text-success text-sm">Full Compliance</span></td>
+                <td class="py-4 px-4 text-text-secondary text-sm">Personal Data Protection Law</td>
+              </tr>
+              <tr class="border-b border-secondary-bg">
+                <td class="py-4 px-4 text-text-primary font-medium">ISO 27001</td>
+                <td class="py-4 px-4"><span class="px-3 py-1 rounded-full bg-accent-blue/20 text-accent-blue text-sm">Roadmap</span></td>
+                <td class="py-4 px-4 text-text-secondary text-sm">Information Security Management</td>
+              </tr>
+              <tr class="border-b border-secondary-bg">
+                <td class="py-4 px-4 text-text-primary font-medium">HIPAA Standards</td>
+                <td class="py-4 px-4"><span class="px-3 py-1 rounded-full bg-success/20 text-success text-sm">Aligned</span></td>
+                <td class="py-4 px-4 text-text-secondary text-sm">US Healthcare Privacy Standards</td>
+              </tr>
+              <tr class="border-b border-secondary-bg">
+                <td class="py-4 px-4 text-text-primary font-medium">GDPR Principles</td>
+                <td class="py-4 px-4"><span class="px-3 py-1 rounded-full bg-success/20 text-success text-sm">Adopted</span></td>
+                <td class="py-4 px-4 text-text-secondary text-sm">EU Data Protection Baseline</td>
+              </tr>
+              <tr>
+                <td class="py-4 px-4 text-text-primary font-medium">MoH Data Standards</td>
+                <td class="py-4 px-4"><span class="px-3 py-1 rounded-full bg-success/20 text-success text-sm">Compliant</span></td>
+                <td class="py-4 px-4 text-text-secondary text-sm">Indonesia Ministry of Health Requirements</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Implementation Roadmap Section -->
+  <section id="roadmap" class="py-20 px-4" style="background: linear-gradient(180deg, #f8faff 0%, #eef2ff 100%);">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-12 fade-in">
+        <span class="inline-block px-4 py-2 rounded-full glass text-accent-purple text-sm font-medium mb-4">
+          <i class="fas fa-road mr-2"></i>Strategic Roadmap
+        </span>
+        <h2 class="section-title text-3xl md:text-5xl font-bold mb-6 text-text-primary">
+          Four-Phase Implementation Roadmap
+        </h2>
+        <p class="text-text-secondary text-lg max-w-3xl mx-auto">
+          An 8-quarter plan starting 2026 Q2 — from national LIS infrastructure at the primary care level to a self-sustaining ASEAN AI reference ecosystem, delivered within 2 years.
+        </p>
+      </div>
+
+      <!-- Phase Overview Strip — static header -->
+      <div class="fade-in mb-10 grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="glass rounded-xl p-4 border-t-4 border-accent-blue text-center">
+          <div class="text-xs font-bold text-accent-blue mb-1">PHASE 1 · 2026 Q2–Q3</div>
+          <div class="text-sm font-semibold text-text-primary leading-tight">National LIS<br>Foundation</div>
+          <div class="mt-2 text-xs text-text-secondary">Primary Care Deployment</div>
+        </div>
+        <div class="glass rounded-xl p-4 border-t-4 border-accent-purple text-center">
+          <div class="text-xs font-bold text-accent-purple mb-1">PHASE 2 · 2026 Q4–2027 Q1</div>
+          <div class="text-sm font-semibold text-text-primary leading-tight">Regional Lab<br>Network</div>
+          <div class="mt-2 text-xs text-text-secondary">N Regional Intelligent Labs</div>
+        </div>
+        <div class="glass rounded-xl p-4 border-t-4 border-success text-center">
+          <div class="text-xs font-bold text-success mb-1">PHASE 3 · 2027 Q2–Q3</div>
+          <div class="text-sm font-semibold text-text-primary leading-tight">AI Integration<br>& Commerce</div>
+          <div class="mt-2 text-xs text-text-secondary">NRL + Commercialization</div>
+        </div>
+        <div class="glass rounded-xl p-4 border-t-4 border-yellow-400 text-center">
+          <div class="text-xs font-bold text-yellow-500 mb-1">PHASE 4 · 2027 Q4–2028 Q1</div>
+          <div class="text-sm font-semibold text-text-primary leading-tight">ASEAN<br>Leadership</div>
+          <div class="mt-2 text-xs text-text-secondary">Self-Sustaining · ASEAN Expansion</div>
+        </div>
+      </div>
+
+      <!-- All 4 phases displayed statically -->
+      <div class="space-y-8 fade-in">
+
+        <!-- PHASE 1 -->
+        <div class="glass rounded-2xl overflow-hidden">
+          <div class="px-6 py-4 border-b border-accent-blue/20" style="background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(124,58,237,0.05));">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-accent-blue flex items-center justify-center text-white text-sm font-bold flex-shrink-0">1</div>
+              <div>
+                <div class="text-xs font-bold text-accent-blue uppercase tracking-wider">Phase 1 · 2026 Q2–Q3</div>
+                <h4 class="font-bold text-text-primary">National LIS Foundation — Primary Care Deployment</h4>
+              </div>
+            </div>
+          </div>
+          <div class="p-6 grid md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div class="p-5 rounded-xl bg-accent-blue/8 border border-accent-blue/25" style="background:rgba(37,99,235,0.06)">
+                <h4 class="font-bold text-accent-blue mb-3 flex items-center gap-2 text-sm">
+                  <i class="fas fa-database"></i>Core Mission: Deploy National Primary Care LIS System
+                </h4>
+                <p class="text-text-secondary text-sm mb-3">Starting from Puskesmas, primary care clinics, and GP workstations, we establish a unified LIS as the digital foundation for the national intelligent diagnostic platform.</p>
+                <ul class="custom-list text-text-secondary text-sm space-y-1">
+                  <li>Connect all Puskesmas nationwide to a unified LIS platform</li>
+                  <li>Standardize lab data entry, reporting, and traceability workflows</li>
+                  <li>Integrate with the SATUSEHAT national health platform</li>
+                  <li>Onboard GP Workstation POCT devices into digital quality supervision</li>
+                </ul>
+              </div>
+              <div class="p-5 rounded-xl border border-accent-blue/20" style="background:rgba(248,250,255,0.9)">
+                <h4 class="font-semibold text-text-primary mb-3 flex items-center gap-2 text-sm">
+                  <i class="fas fa-cogs text-accent-blue"></i>Core Platform Features
+                </h4>
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-circle text-accent-blue text-xs"></i>Real-time IQC Internal Quality Control</div>
+                  <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-circle text-accent-blue text-xs"></i>Automated Anomaly Detection & Alerts</div>
+                  <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-circle text-accent-blue text-xs"></i>Unified SOP Distribution</div>
+                  <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-circle text-accent-blue text-xs"></i>EQA Proficiency Testing Programs</div>
+                  <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-circle text-accent-blue text-xs"></i>Result Mutual Recognition</div>
+                  <div class="flex items-center gap-2 text-xs text-text-secondary"><i class="fas fa-circle text-accent-blue text-xs"></i>Multi-level Referral Pathway Support</div>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="p-5 rounded-xl border border-accent-blue/25" style="background:linear-gradient(135deg,rgba(37,99,235,0.07),rgba(124,58,237,0.07))">
+                <h4 class="font-bold text-text-primary mb-4 flex items-center gap-2 text-sm">
+                  <i class="fas fa-flag text-accent-blue"></i>Key Milestones
+                </h4>
+                <div class="space-y-3">
+                  <div class="flex items-start gap-3">
+                    <div class="w-5 h-5 rounded-full bg-accent-blue flex items-center justify-center flex-shrink-0 mt-0.5 text-xs text-white font-bold">1</div>
+                    <div><div class="text-text-primary text-sm font-semibold">Pilot LIS Deployment (100 Puskesmas)</div><div class="text-text-secondary text-xs">Jakarta, Yogyakarta, Surabaya — Q2 2026</div></div>
+                  </div>
+                  <div class="flex items-start gap-3">
+                    <div class="w-5 h-5 rounded-full bg-accent-blue flex items-center justify-center flex-shrink-0 mt-0.5 text-xs text-white font-bold">2</div>
+                    <div><div class="text-text-primary text-sm font-semibold">National POCT Quality Control Network</div><div class="text-text-secondary text-xs">Unified SOP distribution, EQA programs, and real-time dashboards go live</div></div>
+                  </div>
+                  <div class="flex items-start gap-3">
+                    <div class="w-5 h-5 rounded-full bg-accent-blue flex items-center justify-center flex-shrink-0 mt-0.5 text-xs text-white font-bold">3</div>
+                    <div><div class="text-text-primary text-sm font-semibold">Bidirectional LIS–SATUSEHAT Integration</div><div class="text-text-secondary text-xs">Full end-to-end traceability connected to Indonesia's national health data ecosystem</div></div>
+                  </div>
+                  <div class="flex items-start gap-3">
+                    <div class="w-5 h-5 rounded-full bg-accent-blue flex items-center justify-center flex-shrink-0 mt-0.5 text-xs text-white font-bold">4</div>
+                    <div><div class="text-text-primary text-sm font-semibold">Publish 5 National Diagnostic Standards</div><div class="text-text-secondary text-xs">Priority diseases: TB, Diabetes, Maternal Health, Dengue, Chronic Disease</div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="p-4 rounded-xl border border-success/25" style="background:rgba(5,150,105,0.07)">
+                <div class="flex items-center gap-2 text-success text-sm font-semibold"><i class="fas fa-lightbulb"></i>Phase 1 Core Value</div>
+                <p class="text-text-secondary text-xs mt-2">Isolated primary care testing activities are transformed into <strong class="text-text-primary">standardized national diagnostic nodes</strong> — every Puskesmas becomes both a data generation point and a quality-controlled frontline testing center.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PHASE 2 -->
+        <div class="glass rounded-2xl overflow-hidden">
+          <div class="px-6 py-4 border-b border-accent-purple/20" style="background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(37,99,235,0.05));">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-accent-purple flex items-center justify-center text-white text-sm font-bold flex-shrink-0">2</div>
+              <div>
+                <div class="text-xs font-bold text-accent-purple uppercase tracking-wider">Phase 2 · 2026 Q4–2027 Q1</div>
+                <h4 class="font-bold text-text-primary">Regional Lab Network — N Regional Intelligent Labs</h4>
+              </div>
+            </div>
+          </div>
+          <div class="p-6 grid md:grid-cols-2 gap-6">
+            <div class="p-5 rounded-xl border border-accent-purple/25" style="background:rgba(124,58,237,0.06)">
+              <h4 class="font-bold text-accent-purple mb-3 flex items-center gap-2 text-sm">
+                <i class="fas fa-network-wired"></i>Core Mission: Build N Regional Intelligent Lab Network
+              </h4>
+              <p class="text-text-secondary text-sm mb-3">Building on Phase 1 LIS, we add Regional Intelligent Laboratories to bridge national standards with frontline services — completing the full tiered referral architecture by end of 2027 Q1.</p>
+              <ul class="custom-list text-text-secondary text-sm space-y-1">
+                <li>Deploy Regional Intelligent Labs in provinces for semi-complex testing</li>
+                <li>Implement regional EQA programs and technical supervision</li>
+                <li>Coordinate sample logistics and cross-institutional result recognition</li>
+                <li>Formalize escalation pathways for complex cases to the NRL</li>
+              </ul>
+            </div>
+            <div class="p-5 rounded-xl border border-accent-purple/25" style="background:linear-gradient(135deg,rgba(124,58,237,0.07),rgba(37,99,235,0.07))">
+              <h4 class="font-bold text-text-primary mb-4 flex items-center gap-2 text-sm">
+                <i class="fas fa-flag text-accent-purple"></i>Key Milestones (2026 Q4–2027 Q1)
+              </h4>
+              <div class="space-y-3">
+                <div class="flex items-center gap-3 text-text-secondary text-sm"><i class="fas fa-check-circle text-success flex-shrink-0"></i>LIS expanded to 1,000+ primary care facilities nationwide</div>
+                <div class="flex items-center gap-3 text-text-secondary text-sm"><i class="fas fa-check-circle text-success flex-shrink-0"></i>N Regional Intelligent Laboratories officially operational</div>
+                <div class="flex items-center gap-3 text-text-secondary text-sm"><i class="fas fa-check-circle text-success flex-shrink-0"></i>Result mutual recognition rolled out — reducing repeat testing by 30%+</div>
+                <div class="flex items-center gap-3 text-text-secondary text-sm"><i class="fas fa-check-circle text-success flex-shrink-0"></i>AI medical device certification sandbox established with BPOM</div>
+                <div class="flex items-center gap-3 text-text-secondary text-sm"><i class="fas fa-check-circle text-success flex-shrink-0"></i>5 EQA proficiency programs completed, 25 standards published</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PHASE 3 -->
+        <div class="glass rounded-2xl overflow-hidden">
+          <div class="px-6 py-4 border-b border-success/20" style="background: linear-gradient(135deg, rgba(5,150,105,0.08), rgba(37,99,235,0.05));">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-success flex items-center justify-center text-white text-sm font-bold flex-shrink-0">3</div>
+              <div>
+                <div class="text-xs font-bold text-success uppercase tracking-wider">Phase 3 · 2027 Q2–Q3</div>
+                <h4 class="font-bold text-text-primary">AI Integration & Commerce — Full NRL + Commercialization</h4>
+              </div>
+            </div>
+          </div>
+          <div class="p-6 grid md:grid-cols-2 gap-6">
+            <div class="p-5 rounded-xl border border-success/25" style="background:rgba(5,150,105,0.06)">
+              <h4 class="font-bold text-success mb-3 flex items-center gap-2 text-sm">
+                <i class="fas fa-brain"></i>Core Mission: Full NRL Operations + AI Commercialization
+              </h4>
+              <p class="text-text-secondary text-sm mb-3">The NRL becomes fully operational as the apex technical authority, while standardized datasets from Phases 1–2 power AI model training — with regulatory and reimbursement pathways unlocked by 2027 Q3.</p>
+              <ul class="custom-list text-text-secondary text-sm space-y-1">
+                <li>NRL takes on national EQA coordination and methodology validation</li>
+                <li>Train multi-modal AI diagnostic models on Indonesia-native data</li>
+                <li>AI products certified through the BPOM regulatory sandbox</li>
+                <li>Advocate for JKN reimbursement coverage of AI-assisted diagnostics</li>
+              </ul>
+            </div>
+            <div class="p-5 rounded-xl border border-success/25" style="background:linear-gradient(135deg,rgba(5,150,105,0.07),rgba(37,99,235,0.07))">
+              <h4 class="font-bold text-text-primary mb-4 flex items-center gap-2 text-sm">
+                <i class="fas fa-flag text-success"></i>Key Milestones (2027 Q2–Q3)
+              </h4>
+              <div class="space-y-3">
+                <div class="flex items-center gap-3 text-text-secondary text-sm"><i class="fas fa-check-circle text-success flex-shrink-0"></i>NRL officially achieves international ISO 15189 accreditation</div>
+                <div class="flex items-center gap-3 text-text-secondary text-sm"><i class="fas fa-check-circle text-success flex-shrink-0"></i>First AI models (TB, Diabetes, Cardiovascular) approved by BPOM</div>
+                <div class="flex items-center gap-3 text-text-secondary text-sm"><i class="fas fa-check-circle text-success flex-shrink-0"></i>5 JKN reimbursement codes for AI-assisted services go live</div>
+                <div class="flex items-center gap-3 text-text-secondary text-sm"><i class="fas fa-check-circle text-success flex-shrink-0"></i>Health Digital Twin platform prototype launched</div>
+                <div class="flex items-center gap-3 text-text-secondary text-sm"><i class="fas fa-check-circle text-success flex-shrink-0"></i>25+ Tier 2 commercial partners in pharma and insurance onboarded</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PHASE 4 -->
+        <div class="glass rounded-2xl overflow-hidden">
+          <div class="px-6 py-4 border-b border-yellow-400/25" style="background: linear-gradient(135deg, rgba(234,179,8,0.08), rgba(124,58,237,0.05));">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">4</div>
+              <div>
+                <div class="text-xs font-bold text-yellow-600 uppercase tracking-wider">Phase 4 · 2027 Q4–2028 Q1</div>
+                <h4 class="font-bold text-text-primary">ASEAN Leadership — Self-Sustaining Operations</h4>
+              </div>
+            </div>
+          </div>
+          <div class="p-6 grid md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div class="p-5 rounded-xl border border-yellow-400/25" style="background:rgba(234,179,8,0.06)">
+                <h4 class="font-bold text-yellow-600 mb-3 flex items-center gap-2 text-sm">
+                  <i class="fas fa-globe-asia"></i>Core Mission: Self-Sustaining + ASEAN Expansion
+                </h4>
+                <p class="text-text-secondary text-sm mb-3">The platform enters a self-sustaining phase by 2028 Q1 — a closed-loop commercial model spanning SaaS, data licensing, pharma RWE, and insurance services — and exports the Indonesia model to ASEAN.</p>
+                <ul class="custom-list text-text-secondary text-sm space-y-1">
+                  <li>Established as the ASEAN regional healthcare AI reference center</li>
+                  <li>Export solutions to Malaysia, Vietnam, and the Philippines</li>
+                  <li>Health Digital Twin fully commercialized, targeting 5,000+ institutions</li>
+                  <li>Build Indonesia's native healthcare AI talent and industry ecosystem</li>
+                </ul>
+              </div>
+              <div class="p-4 rounded-xl border border-accent-purple/20" style="background:rgba(124,58,237,0.06)">
+                <h4 class="text-sm font-semibold text-text-primary mb-3"><i class="fas fa-coins text-yellow-500 mr-2"></i>Diversified Closed-Loop Business Model</h4>
+                <div class="grid grid-cols-2 gap-2 text-xs text-text-secondary">
+                  <div class="flex items-center gap-2"><i class="fas fa-circle text-yellow-500 text-xs"></i>SaaS Subscription (Hospitals)</div>
+                  <div class="flex items-center gap-2"><i class="fas fa-circle text-yellow-500 text-xs"></i>Data Licensing (Research / Pharma)</div>
+                  <div class="flex items-center gap-2"><i class="fas fa-circle text-yellow-500 text-xs"></i>RWE Services (Pharmaceutical)</div>
+                  <div class="flex items-center gap-2"><i class="fas fa-circle text-yellow-500 text-xs"></i>Actuarial Data (Insurance)</div>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="p-5 rounded-xl border border-yellow-400/25" style="background:linear-gradient(135deg,rgba(234,179,8,0.07),rgba(124,58,237,0.07))">
+                <h4 class="font-bold text-text-primary mb-4 flex items-center gap-2 text-sm">
+                  <i class="fas fa-star text-yellow-500"></i>Key Milestones (2027 Q4–2028 Q1)
+                </h4>
+                <div class="space-y-3">
+                  <div class="flex items-center gap-3 text-text-secondary text-sm"><i class="fas fa-star text-yellow-500 flex-shrink-0"></i>5,000+ institutions connected to the unified LIS/LIMS platform</div>
+                  <div class="flex items-center gap-3 text-text-secondary text-sm"><i class="fas fa-star text-yellow-500 flex-shrink-0"></i>Platform annual revenue covers operating costs — fully self-sustaining</div>
+                  <div class="flex items-center gap-3 text-text-secondary text-sm"><i class="fas fa-star text-yellow-500 flex-shrink-0"></i>First ASEAN nation to complete full Digital Twin clinical integration</div>
+                  <div class="flex items-center gap-3 text-text-secondary text-sm"><i class="fas fa-star text-yellow-500 flex-shrink-0"></i>Indonesia becomes the ASEAN standard-setter for healthcare AI</div>
+                  <div class="flex items-center gap-3 text-text-secondary text-sm"><i class="fas fa-star text-yellow-500 flex-shrink-0"></i>100+ active strategic and commercial partners in the ecosystem</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  <!-- Footer -->
+  <footer class="py-12 px-4 border-t border-accent-purple/20">
+    <div class="max-w-7xl mx-auto text-center">
+      <div class="mb-6">
+        <h3 class="text-2xl font-bold text-text-primary mb-2">Indonesia National Reference Lab · POCT/IVD at Scale</h3>
+        <p class="text-text-secondary">A collaborative initiative for Indonesia's health future</p>
+      </div>
+      <p class="text-text-secondary text-sm">© Indonesia Healthcare National Reference Lab. All rights reserved.</p>
+    </div>
+  </footer>
+</div>
+
+<script>
+// Intersection Observer
+const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, observerOptions);
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// Roadmap Logic — 4 Phases
+let currentPhase = 1;
+let timelineValue = 0;
+
+const phaseColors = { 1: '#3b82f6', 2: '#8b5cf6', 3: '#10b981', 4: '#f59e0b' };
+const phaseLabels = {
+  1: 'LIS Sites Deployed',
+  2: 'Facilities Connected',
+  3: 'AI Models Certified',
+  4: 'Institutions in Network'
+};
+
+const phaseData = {
+  1: {
+    facilities: [10, 200], standards: [3, 10], ai: [0, 2], partners: [3, 8],
+    progress: [1, 20], standardsProgress: [3, 10],
+    tags: ['POCT', 'LIS', 'TB', 'Diabetes'],
+    badge: ''
+  },
+  2: {
+    facilities: [200, 1000], standards: [10, 30], ai: [2, 12], partners: [8, 25],
+    progress: [20, 50], standardsProgress: [10, 30],
+    tags: ['TB', 'Diabetes', 'Maternal', 'Dengue', 'Referral'],
+    badge: '5 EQA Programs Live'
+  },
+  3: {
+    facilities: [1000, 2500], standards: [30, 60], ai: [12, 30], partners: [25, 60],
+    progress: [50, 80], standardsProgress: [30, 60],
+    tags: ['TB', 'Diabetes', 'Maternal', 'Oncology', 'Cardio', 'Resp'],
+    badge: '5 JKN Reimbursement Codes'
+  },
+  4: {
+    facilities: [2500, 5000], standards: [60, 100], ai: [30, 50], partners: [60, 100],
+    progress: [80, 100], standardsProgress: [60, 100],
+    tags: ['TB', 'Diabetes', 'Maternal', 'Oncology', 'Cardio', 'Resp', 'Neuro', 'Digital Twin'],
+    badge: '✓ Self-Sustaining'
+  }
+};
+
+function lerp(start, end, t) {
+  return Math.round(start + (end - start) * t);
+}
+
+function setPhase(phase) {
+  currentPhase = phase;
+  const timelineValues = { 1: 0, 2: 33, 3: 66, 4: 100 };
+  timelineValue = timelineValues[phase];
+  // slider removed
+
+  document.querySelectorAll('.phase-btn').forEach(btn => {
+    btn.classList.remove('bg-accent-blue/30', 'bg-accent-purple/30', 'bg-success/30', 'bg-yellow-500/30', 'ring-2', 'ring-accent-blue', 'ring-accent-purple', 'ring-success', 'ring-yellow-400');
+    if (parseInt(btn.dataset.phase) === phase) {
+      const colorMap = { 1: 'bg-accent-blue/30', 2: 'bg-accent-purple/30', 3: 'bg-success/30', 4: 'bg-yellow-500/30' };
+      btn.classList.add(colorMap[phase]);
+    }
+  });
+
+  updateUI(phase, 1);
+  updateYearLabel();
+  showPhaseDetails(phase);
+}
+
+function updateTimeline(value) {
+  timelineValue = parseInt(value);
+  let phase, t;
+  if (value <= 25) {
+    phase = 1; t = value / 25;
+  } else if (value <= 50) {
+    phase = 2; t = (value - 25) / 25;
+  } else if (value <= 75) {
+    phase = 3; t = (value - 50) / 25;
+  } else {
+    phase = 4; t = (value - 75) / 25;
+  }
+
+  if (phase !== currentPhase) {
+    currentPhase = phase;
+    document.querySelectorAll('.phase-btn').forEach(btn => {
+      btn.classList.remove('bg-accent-blue/30', 'bg-accent-purple/30', 'bg-success/30', 'bg-yellow-500/30');
+      if (parseInt(btn.dataset.phase) === phase) {
+        const colorMap = { 1: 'bg-accent-blue/30', 2: 'bg-accent-purple/30', 3: 'bg-success/30', 4: 'bg-yellow-500/30' };
+        btn.classList.add(colorMap[phase]);
+      }
+    });
+    showPhaseDetails(phase);
+  }
+
+  updateUI(phase, t);
+  updateYearLabel();
+}
+
+function updateUI(phase, t) {
+  const data = phaseData[phase];
+  const color = phaseColors[phase];
+
+  document.getElementById('facilitiesCounter').textContent = lerp(data.facilities[0], data.facilities[1], t).toLocaleString();
+  document.getElementById('facilitiesLabel').textContent = phaseLabels[phase];
+  document.getElementById('standardsCounter').textContent = lerp(data.standards[0], data.standards[1], t);
+  document.getElementById('aiCounter').textContent = lerp(data.ai[0], data.ai[1], t);
+  document.getElementById('partnersCounter').textContent = lerp(data.partners[0], data.partners[1], t);
+
+  document.getElementById('facilitiesProgress').style.width = `${lerp(data.progress[0], data.progress[1], t)}%`;
+  document.getElementById('standardsProgress').style.width = `${lerp(data.standardsProgress[0], data.standardsProgress[1], t)}%`;
+
+  const tagsContainer = document.getElementById('specialtyTags');
+  const tagCount = Math.max(1, Math.ceil(t * data.tags.length));
+  tagsContainer.innerHTML = data.tags.slice(0, tagCount).map(tag =>
+    `<span class="px-2 py-1 rounded bg-accent-purple/20 text-accent-purple text-xs">${tag}</span>`
+  ).join('');
+
+  document.getElementById('achievementBadge').textContent = t > 0.6 ? data.badge : '';
+}
+
+function showPhaseDetails(phase) {
+  [1, 2, 3, 4].forEach(p => {
+    const el = document.getElementById(`phase${p}Details`);
+    if (el) el.classList.add('hidden');
+  });
+  const active = document.getElementById(`phase${phase}Details`);
+  if (active) active.classList.remove('hidden');
+}
+
+function updateYearLabel() {
+  const yearMap = [
+    '2026 Q2', '2026 Q2', '2026 Q2', '2026 Q2', '2026 Q2',
+    '2026 Q2', '2026 Q2', '2026 Q2', '2026 Q2', '2026 Q2',
+    '2026 Q2', '2026 Q2', '2026 Q2', '2026 Q3', '2026 Q3',
+    '2026 Q3', '2026 Q3', '2026 Q3', '2026 Q3', '2026 Q3',
+    '2026 Q3', '2026 Q3', '2026 Q3', '2026 Q3', '2026 Q3',
+    '2026 Q3', '2026 Q4', '2026 Q4', '2026 Q4', '2026 Q4',
+    '2026 Q4', '2026 Q4', '2026 Q4', '2026 Q4', '2026 Q4',
+    '2026 Q4', '2026 Q4', '2026 Q4', '2027 Q1', '2027 Q1',
+    '2027 Q1', '2027 Q1', '2027 Q1', '2027 Q1', '2027 Q1',
+    '2027 Q1', '2027 Q1', '2027 Q1', '2027 Q1', '2027 Q1',
+    '2027 Q1', '2027 Q2', '2027 Q2', '2027 Q2', '2027 Q2',
+    '2027 Q2', '2027 Q2', '2027 Q2', '2027 Q2', '2027 Q2',
+    '2027 Q2', '2027 Q2', '2027 Q2', '2027 Q3', '2027 Q3',
+    '2027 Q3', '2027 Q3', '2027 Q3', '2027 Q3', '2027 Q3',
+    '2027 Q3', '2027 Q3', '2027 Q3', '2027 Q3', '2027 Q3',
+    '2027 Q4', '2027 Q4', '2027 Q4', '2027 Q4', '2027 Q4',
+    '2027 Q4', '2027 Q4', '2027 Q4', '2027 Q4', '2027 Q4',
+    '2027 Q4', '2027 Q4', '2028 Q1', '2028 Q1', '2028 Q1',
+    '2028 Q1', '2028 Q1', '2028 Q1', '2028 Q1', '2028 Q1',
+    '2028 Q1', '2028 Q1', '2028 Q1', '2028 Q1', '2028 Q1'
+  ];
+  document.getElementById('currentYear').textContent = yearMap[Math.min(timelineValue, 100)];
+}
+
+// Initialize
+setPhase(1);
+
+// Smooth scroll function
+function scrollToSection(sectionId) {
+  const element = document.getElementById(sectionId);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+</script>
+</body>
+</html>
